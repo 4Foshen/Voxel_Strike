@@ -250,6 +250,7 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
     <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd2" min="2" max="10" step="1" value="6"><b id="rd2V">6</b></div>
     <div id="loPauseBox"><div style="margin-top:8px">Снаряжение</div><div class="lo" id="loPause"></div></div>
     <button class="btn" id="resume">Продолжить</button>
+    <button class="btn sm" id="toMenu" style="background:#8a3a2e">Выйти в меню</button>
   </div>
 </div>
 
@@ -258,6 +259,7 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
     <h2 id="endT">Победа</h2>
     <div class="sub" id="endS"></div>
     <button class="btn" id="restart">Играть снова</button>
+    <button class="btn sm" id="endMenu" style="background:#46586e">В меню</button>
   </div>
 </div>
 
@@ -2961,6 +2963,21 @@ $('restart').onclick=()=>{
   }
   requestLock();startGame();
 };
+/* Выход в главное меню (из паузы или с экрана конца матча): матч прекращается, соединение по сети закрывается */
+function toMenu(){
+  G.state='menu';G.ready=false;fakeLock=false;   // состояние меняем до снятия блокировки, чтобы не всплыла пауза
+  releaseLock();
+  if(NET.on||NET.pc)NET.close();
+  mouse.left=mouse.right=false;for(const k in keys)keys[k]=false;
+  if(TOUCH)Touch.reset();
+  Hooks.clear();Pw.clear();Loadout.storm=false;
+  for(const b of ALLBOTS){b.alive=false;b.group.visible=false;}if(Remote){Remote.alive=false;Remote.group.visible=false;}
+  for(const id of['pause','end','net','scope','hud'])$(id).classList.add('hidden');
+  $('menu').classList.remove('hidden');
+  setMode(G.mode);Prog.refreshMenu();
+}
+$('toMenu').onclick=()=>{if(G.mode==='duel'&&NET.on&&!confirm('Выйти в меню? Матч по сети будет прерван.'))return;toMenu();};
+$('endMenu').onclick=toMenu;
 $('resume').onclick=()=>{if(scene)setRenderDistance(G.rd);requestLock();};
 $('pause').addEventListener('mousedown',e=>e.stopPropagation());
 
