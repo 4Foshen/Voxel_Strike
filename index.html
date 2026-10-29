@@ -1327,7 +1327,7 @@ const WDEF=[
 ];
 const KNIFE=WDEF.length-1;
 // ads: высота верхушки мушки над осью модели (при прицеливании она ставится ровно в центр экрана = точка выстрела), fov при прицеливании
-const ADS=[{y:.098,f:62},{y:.103,f:60},{y:.07,f:64},null,{y:.095,f:58},{y:.125,f:60},{y:.14,f:66},null];
+const ADS=[{y:.118,f:62},{y:.101,f:60},{y:.106,f:64},null,{y:.122,f:58},{y:.136,f:60},{y:.126,f:66},null];
 const NW=WDEF.length;
 const SLOTS=[];for(let i=0;i<NW;i++)SLOTS.push({t:'w',id:i});SLOTS.push({t:'b',id:0});
 const KEYLABELS=['1','2','3','4','5','6','7','8'];
@@ -1586,6 +1586,7 @@ function buildBotModelBlocks(team){
   return g;
 }
 /* Модель солдата со скелетом (assets/models/soldier.glb, встроена в soldier_glb.js, чтобы работало и без сервера) */
+const _sq=new THREE.Quaternion(),_sx=new THREE.Vector3();
 const Soldier={
   ok:false,gltf:null,
   load(){
@@ -1613,7 +1614,7 @@ const Soldier={
     const mixer=new THREE.AnimationMixer(root),acts={};
     for(const c of this.gltf.animations){const a=mixer.clipAction(c);a.setLoop(c.name==='die'?THREE.LoopOnce:THREE.LoopRepeat);if(c.name==='die')a.clampWhenFinished=true;acts[c.name]=a;}
     acts.idle.play();
-    g.userData={soldier:true,body,mixer,acts,cur:acts.idle,curName:'idle',flash};
+    g.userData={soldier:true,body,mixer,acts,cur:acts.idle,curName:'idle',flash,spine:root.getObjectByName('Spine'),chest:root.getObjectByName('Chest'),head:root.getObjectByName('Head'),pit:0,rec:0};
     return g;
   },
   tint(e){
@@ -1622,12 +1623,25 @@ const Soldier={
   },
   anim(b,dt){
     const u=b.group.userData,sp=Math.hypot(b.vx,b.vz),aim=b.vis?'aim_':'';
+    // клип по направлению движения относительно взгляда: вперёд / назад / боковой шаг
+    const sy=Math.sin(b.yaw),cy=Math.cos(b.yaw),fw=b.vx*sy+b.vz*cy,lt=b.vx*cy-b.vz*sy;
     let name,ts=1;
-    if(sp>5.2){name=aim+'run';ts=clamp(sp/4.2,.8,1.8);}
-    else if(sp>.6){name=aim+'walk';ts=clamp(sp/1.8,.5,2.4);}
-    else name=aim+'idle';
+    if(sp<=.6)name=aim+'idle';
+    else if(Math.abs(lt)>Math.abs(fw)*1.1){name=lt>0?'strafe_l':'strafe_r';ts=clamp(sp/2.2,.6,1.8);}
+    else if(fw<0){name=aim+'walk';ts=-clamp(sp/1.8,.5,2);}
+    else if(sp>5.2){name=aim+'run';ts=clamp(sp/4.2,.8,1.8);}
+    else{name=aim+'walk';ts=clamp(sp/1.8,.5,2.4);}
     if(name!==u.curName){const nx=u.acts[name];nx.reset().fadeIn(.18).play();u.cur.fadeOut(.18);u.cur=nx;u.curName=name;}
     u.cur.setEffectiveTimeScale(ts);u.mixer.update(dt);
+    // поверх клипа: корпус и голова поворачиваются к цели по высоте, отдача при выстреле
+    let pit=0;const t=b.target;
+    if(t&&t.alive)pit=clamp(Math.atan2((t.y+1.2)-(b.y+1.45),Math.hypot(t.x-b.x,t.z-b.z)+.001),-.5,.5);
+    u.pit+=(pit-u.pit)*Math.min(1,dt*8);
+    u.rec=Math.max(b.flashT>0?1:0,u.rec-dt*9);
+    const kick=u.rec*.1;
+    _sq.setFromAxisAngle(_sx.set(1,0,0),-u.pit*.35-kick*.4);u.spine.quaternion.multiply(_sq);
+    _sq.setFromAxisAngle(_sx,-u.pit*.35-kick*.6);u.chest.quaternion.multiply(_sq);
+    _sq.setFromAxisAngle(_sx,-u.pit*.3+kick*.35);u.head.quaternion.multiply(_sq);
     u.flash.visible=b.flashT>0;
   }
 };
@@ -1849,13 +1863,22 @@ function buildViewmodels(){
   const GM=0x23262b,DK=0x121418,ST=0x5d626a,PL=0x2d3034,WD=0x7a4a24,WD2=0x5e3718,OL=0x4a5236,BR=0xc9a23a,GL=0x6aa8d8,RD=0xb03a2e,LT=0x8a9099,SC=0x16181c,DOT=0xff3030,TN=0x8a7a4c;
   // B — кубик в группе оружия, C — кубик-потомок (двигается вместе с родителем)
   const mk=g=>(...a)=>{const m=bx(...a);g.add(m);return m;};
+  // коллиматор: рамка с прозрачной линзой и красной точкой; yc — высота точки над осью оружия (при прицеливании она встаёт в центр экрана)
+  const GLS=new THREE.MeshBasicMaterial({color:0x7fc4ff,transparent:true,opacity:.16,depthWrite:false}),DOTM=new THREE.MeshBasicMaterial({color:0xff2a2a,fog:false});
+  const dotSight=(g,yc,z,s)=>{
+    const add=(w,h,d,c,x,y,zz)=>{const m=bx(w,h,d,c,x*s,yc+y*s,z+zz*s);m.scale.set(s,s,s);g.add(m);};
+    add(.04,.01,.09,DK,0,-.034,0);add(.006,.054,.06,GM,.022,-.008,0);add(.006,.054,.06,GM,-.022,-.008,0);
+    add(.05,.008,.07,GM,0,.027,-.005);add(.038,.01,.012,GM,0,-.024,-.034);add(.008,.008,.008,ST,.027,0,.015);
+    const lens=new THREE.Mesh(new THREE.BoxGeometry(.038*s,.044*s,.002),GLS);lens.position.set(0,yc,z-.03*s);g.add(lens);
+    const dot=new THREE.Mesh(new THREE.BoxGeometry(.0055*s,.0055*s,.0025),DOTM);dot.position.set(0,yc,z-.0305*s);g.add(dot);
+  };
   const ck=(p,w,h,d,c,x,y,z)=>{const m=bx(w,h,d,c,x,y,z);p.add(m);return m;};
   const defs=[
     // 0 — пистолет
     g=>{const B=mk(g);const sl=B(.058,.066,.27,GM,0,.05,-.1);B(.052,.04,.24,PL,0,.005,-.08);B(.056,.13,.075,PL,0,-.07,.035);B(.02,.03,.07,PL,0,-.032,-.06);
-      B(.012,.016,.012,ST,0,.09,-.225);B(.03,.014,.014,ST,0,.09,.02);B(.034,.034,.02,DK,0,.05,-.245);const mg=B(.052,.12,.07,DK,0,-.12,.035);
+      B(.034,.034,.02,DK,0,.05,-.245);dotSight(g,.118,-.06,.75);const mg=B(.052,.12,.07,DK,0,-.12,.035);
       for(let i=0;i<5;i++)ck(sl,.062,.05,.006,DK,0,0,.075+i*.017);          // насечки на затворе
-      ck(sl,.03,.006,.21,ST,0,.036,0);ck(sl,.004,.026,.055,DK,.031,.012,-.045);ck(sl,.01,.016,.012,DK,-.012,.04,.12);ck(sl,.01,.016,.012,DK,.012,.04,.12);
+      ck(sl,.03,.006,.21,ST,0,.036,0);ck(sl,.004,.026,.055,DK,.031,.012,-.045);
       ck(sl,.022,.022,.012,ST,0,-.002,-.14);                                  // дульный срез ствола
       ck(mg,.056,.016,.074,ST,0,-.068,0);ck(mg,.05,.012,.006,LT,0,-.02,-.036);
       for(let i=0;i<3;i++)B(.06,.008,.05,DK,0,-.04-i*.028,.037);
@@ -1864,9 +1887,8 @@ function buildViewmodels(){
     // 1 — пистолет-пулемёт
     g=>{const B=mk(g);const sl=B(.04,.025,.1,ST,.03,.04,-.02);B(.065,.085,.34,GM,0,0,-.08);const hg=B(.075,.07,.2,PL,0,-.005,-.32);B(.025,.025,.1,DK,0,.012,-.46);B(.035,.035,.03,DK,0,.012,-.52);
       const mg=B(.042,.16,.055,DK,0,-.13,-.06);mg.rotation.x=.12;B(.05,.11,.055,PL,0,-.1,.065);B(.05,.06,.2,PL,0,-.01,.2);B(.055,.075,.03,DK,0,-.01,.31);
-      B(.012,.03,.012,ST,0,.058,-.4);
       B(.03,.012,.34,GM,0,.05,-.08);for(let i=0;i<9;i++)B(.034,.008,.014,DK,0,.058,-.22+i*.04);   // верхняя планка с зубьями
-      B(.04,.018,.07,DK,0,.07,-.0);B(.044,.045,.05,GM,0,.103,-.0);B(.034,.034,.004,0x2a3a6a,0,.103,-.027);B(.006,.006,.003,DOT,0,.105,-.029);  // коллиматор
+      dotSight(g,.101,0,1);  // коллиматор
       for(let i=0;i<4;i++){B(.079,.018,.016,DK,0,-.005,-.26-i*.045);}                                // вентиляция цевья
       B(.042,.09,.042,PL,0,-.08,-.34);B(.046,.014,.046,DK,0,-.128,-.34);                              // передняя рукоять
       for(const sx of[-.022,.022])B(.012,.034,.05,DK,sx,.012,-.555);                                // пламегаситель
@@ -1876,7 +1898,7 @@ function buildViewmodels(){
       return{mz:[0,.012,-.57],mov:sl,mt:'slide',amt:.06,mag:mg,rt:'mag',amp:.24,rh:[0,-.1,.065],lh:[0,-.105,-.34]};},
     // 2 — дробовик
     g=>{const B=mk(g);B(.04,.04,.6,DK,0,.035,-.4);B(.036,.036,.5,GM,0,-.012,-.36);const pump=B(.078,.055,.17,WD,0,-.012,-.33);B(.065,.085,.26,GM,0,.005,.0);
-      B(.05,.1,.055,PL,0,-.08,.085);B(.055,.09,.28,WD,0,-.02,.24);B(.014,.016,.014,BR,0,.062,-.7);B(.05,.03,.1,ST,0,.052,-.04);
+      B(.05,.1,.055,PL,0,-.08,.085);B(.055,.09,.28,WD,0,-.02,.24);B(.014,.016,.014,BR,0,.062,-.7);B(.05,.03,.1,ST,0,.052,-.04);dotSight(g,.106,-.04,1);
       for(let i=0;i<5;i++)ck(pump,.082,.058,.008,WD2,0,0,-.07+i*.035);                                   // рифление цевья
       B(.014,.012,.58,ST,0,.062,-.4);B(.05,.05,.02,DK,0,.035,-.72);B(.046,.046,.026,ST,0,-.012,-.62);B(.052,.05,.02,DK,0,-.012,-.5);
       B(.067,.022,.08,DK,0,-.045,.0);B(.004,.032,.07,DK,.034,.015,-.02);B(.064,.02,.08,ST,0,.05,.0);
@@ -1901,10 +1923,10 @@ function buildViewmodels(){
       return{mz:[0,.015,-.97],mov:null,bolt,mt:'bolt',mag:mg,rt:'bolt',amp:.12,rh:[0,-.09,.1],lh:[0,-.065,-.34]};},
     // 4 — штурмовая винтовка
     g=>{const B=mk(g);const bl=B(.04,.025,.1,ST,.04,.045,-.04);B(.07,.09,.4,GM,0,0,-.05);B(.076,.076,.28,OL,0,-.005,-.38);B(.02,.02,.26,ST,0,.058,-.38);B(.025,.025,.14,DK,0,.012,-.58);B(.036,.036,.045,DK,0,.012,-.67);
-      const mg=B(.045,.17,.065,DK,0,-.14,-.1);mg.rotation.x=.2;B(.05,.1,.06,PL,0,-.09,.08);B(.055,.09,.26,OL,0,-.015,.3);B(.014,.04,.014,ST,0,.075,-.6);B(.04,.03,.18,ST,0,.068,.02);
+      const mg=B(.045,.17,.065,DK,0,-.14,-.1);mg.rotation.x=.2;B(.05,.1,.06,PL,0,-.09,.08);B(.055,.09,.26,OL,0,-.015,.3);B(.04,.03,.18,ST,0,.068,.02);
       for(let i=0;i<5;i++){B(.08,.018,.02,DK,0,-.005,-.27-i*.045);B(.02,.07,.02,DK,.0,-.005,-.27-i*.045);}   // вентиляционные прорези цевья
       for(let i=0;i<10;i++)B(.024,.008,.012,DK,0,.07,-.26-i*.025*1.0);
-      B(.03,.03,.014,DK,0,.095,.06);B(.014,.04,.014,ST,-.02,.08,.06);B(.014,.04,.014,ST,.02,.08,.06);   // диоптр
+      dotSight(g,.122,-.02,1);
       B(.04,.04,.03,DK,0,.04,-.55);B(.004,.03,.09,ST,.036,.02,-.02);B(.016,.016,.02,ST,.04,.012,.0);B(.012,.02,.02,ST,-.038,.0,.06);
       for(const sx of[-.014,.014])B(.01,.026,.04,DK,sx,.012,-.7);B(.016,.016,.04,DK,0,.034,-.7);B(.058,.1,.03,DK,0,-.015,.45);B(.05,.016,.1,PL,0,-.06,.3);
       B(.012,.012,.1,PL,0,-.06,.01);B(.012,.03,.012,ST,0,-.04,.03);B(.014,.05,.02,PL,0,-.1,-.12);
@@ -1913,7 +1935,7 @@ function buildViewmodels(){
     // 5 — пулемёт
     g=>{const B=mk(g);const bl=B(.04,.025,.12,ST,.05,.06,-.1);B(.09,.11,.5,GM,0,0,-.1);B(.075,.075,.3,0x1b1d21,0,.01,-.45);for(let i=0;i<4;i++)B(.08,.012,.03,DK,0,.052,-.35-i*.07);
       B(.03,.03,.1,DK,0,.01,-.66);const bx2=B(.12,.12,.15,OL,0,-.13,-.05);B(.03,.04,.12,BR,.02,-.07,-.05);B(.05,.1,.06,PL,0,-.1,.1);B(.055,.09,.22,OL,0,-.015,.32);
-      B(.014,.14,.014,ST,.04,-.06,-.62).rotation.z=.25;B(.014,.14,.014,ST,-.04,-.06,-.62).rotation.z=-.25;B(.02,.07,.02,ST,0,.09,-.1);
+      B(.014,.14,.014,ST,.04,-.06,-.62).rotation.z=.25;B(.014,.14,.014,ST,-.04,-.06,-.62).rotation.z=-.25;dotSight(g,.136,-.06,1);
       B(.1,.03,.2,ST,0,.075,-.05);B(.104,.01,.14,GM,0,.092,-.05);B(.03,.034,.16,DK,0,.07,-.28);                       // крышка подачи, планка
       for(let i=0;i<4;i++){B(.004,.03,.03,DK,.039,.01,-.34-i*.07);B(.004,.03,.03,DK,-.039,.01,-.34-i*.07);}          // отверстия кожуха
       B(.044,.044,.03,DK,0,.01,-.72);B(.056,.056,.02,GM,0,.01,-.6);B(.014,.014,.1,PL,0,-.065,.06);B(.012,.03,.012,ST,0,-.04,.08);
@@ -1924,9 +1946,9 @@ function buildViewmodels(){
     // 6 — гранатомёт
     g=>{const B=mk(g);B(.115,.115,.85,OL,0,.03,-.15);B(.15,.15,.07,0x3a3f2a,0,.03,.3);B(.16,.16,.09,0x3a3f2a,0,.03,-.6);const rk=B(.1,.1,.2,0x8a4a22,0,.03,-.74);
       ck(rk,.062,.062,.08,0xc0392b,0,0,-.14);ck(rk,.03,.03,.04,DK,0,0,-.19);for(const s of[[.07,0],[-.07,0],[0,.07],[0,-.07]])ck(rk,s[0]?.04:.014,s[1]?.04:.014,.07,0x6a3a1a,s[0],s[1],.09);
-      B(.05,.12,.06,PL,0,-.09,0);B(.045,.1,.05,PL,0,-.09,-.3);B(.03,.06,.03,ST,0,.11,-.1);B(.02,.03,.1,ST,0,.095,-.3);
+      B(.05,.12,.06,PL,0,-.09,0);B(.045,.1,.05,PL,0,-.09,-.3);
       for(let i=0;i<5;i++)B(.12,.12,.012,DK,0,.03,-.4+i*.15);B(.118,.118,.03,0xd9b324,0,.03,-.52);B(.118,.118,.03,0xd9b324,0,.03,.12);
-      B(.05,.07,.1,DK,0,.1,.0);B(.036,.036,.004,0x2a3a6a,0,.1,-.052);B(.12,.12,.04,DK,0,.03,.34);B(.1,.04,.14,DK,0,-.06,.1);B(.08,.016,.12,ST,0,.095,-.2);
+      dotSight(g,.126,0,1);B(.12,.12,.04,DK,0,.03,.34);B(.1,.04,.14,DK,0,-.06,.1);B(.08,.016,.12,ST,0,.095,-.2);
       B(.012,.024,.024,ST,0,.0,.2);B(.012,.012,.1,PL,0,-.05,.0);B(.012,.03,.012,ST,0,-.03,-.03);
       return{mz:[0,.03,-.92],mov:null,mag:rk,rt:'rocket',amp:.5,rh:[0,-.1,.0],lh:[0,-.1,-.3]};},
     // 7 — нож

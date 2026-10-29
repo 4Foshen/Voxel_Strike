@@ -63,10 +63,10 @@ GRIP_OFF=.06
 def hand_rest_frame(sd):
     f0=unit(TIP['Hand.'+sd]-P0['Hand.'+sd]);u0=np.array([0,0,1.]);u0=unit(u0-(u0@f0)*f0);x0=np.cross(u0,f0)
     return np.stack([x0,u0,f0],1)     # колонки: оси gun x,y,z в пространстве кости
-def arms(loc,htr,pose):
+def arms(loc,htr,pose,gs=(0,0,0)):
     Rw,Pw=fk(loc,htr)
     Rc=Rw['Chest'];Pc=Pw['Chest']
-    G,F=GUN[pose];G=np.array(G);F=unit(F)
+    G,F=GUN[pose];G=np.array(G)+np.array(gs);F=unit(F)
     U=unit(np.array([0,1.,0])-F*F[1]);X=np.cross(U,F)
     Mg=np.stack([X,U,F],1)
     for sd,sg in(('L',1),('R',-1)):
@@ -85,22 +85,49 @@ def arms(loc,htr,pose):
         loc['Hand.'+sd]=Wl.inv()*R.from_matrix(Mw@Mr.T)
     return loc
 
-def locomotion(t,T,A,K,bob,lean,pose):
-    ph=2*np.pi*t/T if T else 0
+def locomotion(t,T,A,K,bob,lean,pose,mode='fwd',side=1):
+    """mode: idle - перенос веса и осмотр; fwd - шаг/бег; strafe - боковой шаг (side=+1 влево персонажа, -1 вправо)"""
     loc={n:R.identity() for n in NAMES}
-    s=np.sin(ph);c=np.cos(ph);k=(A/.45) if A else 0
-    for sd,sg in(('L',1),('R',-1)):
-        th=-A*s*sg
-        kn=(K*max(0.,c*sg)+.06*K) if A>0 else 0
-        loc['UpLeg.'+sd]=RX(th);loc['LowLeg.'+sd]=RX(kn);loc['Foot.'+sd]=RX(-(th+kn)*.6)
-    loc['Spine']=RX(lean*.5)*RY(-.10*s*k)
-    loc['Chest']=RX(lean*.5)*RY(.12*s*k)
-    loc['Head']=RY(-.08*s*k)*RX(-lean*.6)
-    loc['Hips']=RY(.10*s*k)
-    if A>0:htr=np.array([0,-abs(s)*bob-bob*.4,0])
+    aimk=.5 if pose=='aim' else 1.0
+    htr=np.zeros(3);gs=np.zeros(3)
+    if mode=='idle':
+        w=2*np.pi*t/3.0;sh=np.sin(w);b=np.sin(w*2+.3)
+        htr=np.array([.012*sh,-.004*abs(sh)+.003*b,0])
+        loc['Hips']=RZ(.028*sh)*RY(.035*np.sin(w+1))
+        for sd,sg in(('L',1),('R',-1)):       # на ногу, на которую смещён вес, - прямая; другая слегка согнута
+            un=max(0.,-sh*sg)
+            loc['UpLeg.'+sd]=RX(-.06*un)*RZ(-.012*sh*sg);loc['LowLeg.'+sd]=RX(.14*un);loc['Foot.'+sd]=RX(-.08*un)
+        loc['Foot.R']=loc['Foot.R']*RX(.1*max(0.,np.sin(w*2)))      # лёгкий перетоп носком
+        loc['Spine']=RX(.006*b)*RZ(-.012*sh);loc['Chest']=RX(.015*b)*RZ(-.014*sh)*RY(.02*np.sin(w+2))
+        yaw=(.24*np.sin(w)+.1*np.sin(2*w+1))*aimk;pit=.05*np.sin(3*w)*aimk
+        loc['Neck']=RY(yaw*.4)*RX(pit*.4);loc['Head']=RY(yaw*.6)*RX(pit*.6)
+        gs=np.array([.006*np.sin(2*w),.006*b,0])
+    elif mode=='strafe':
+        ph=2*np.pi*t/T;D=.3
+        for sd,sg in(('L',1),('R',-1)):
+            pi_=ph+(0 if sg>0 else np.pi);sn=np.sin(pi_);cs=np.cos(pi_)
+            # ведущая нога уходит в сторону, вторая подтягивается; колено сгибается при переносе
+            loc['UpLeg.'+sd]=RZ(side*D*(.5+.5*sn))*RX(-.12*cs)
+            kn=.55*max(0.,cs);loc['LowLeg.'+sd]=RX(kn);loc['Foot.'+sd]=RZ(-side*D*(.5+.5*sn))*RX(-kn*.5)
+        s_=np.sin(ph)
+        htr=np.array([side*.03*s_,-.03-.02*np.cos(2*ph),0])
+        loc['Hips']=RZ(-side*.05*s_)*RY(.05*np.sin(ph));loc['Spine']=RZ(side*.03*s_)*RX(.05);loc['Chest']=RY(-.06*np.sin(ph))*RX(.06)
+        loc['Head']=RX(-.05)
+        gs=np.array([.01*np.sin(ph),.012*np.cos(2*ph),0])
     else:
-        b=np.sin(2*np.pi*t/3.0);loc['Chest']=RX(.012*b)*loc['Chest'];htr=np.array([0,.004*b,0])
-    return arms(loc,htr,pose),htr
+        ph=2*np.pi*t/T;s=np.sin(ph);c=np.cos(ph);k=A/.45
+        for sd,sg in(('L',1),('R',-1)):
+            th=-A*s*sg;kn=K*max(0.,c*sg)+.08*K
+            loc['UpLeg.'+sd]=RX(th);loc['LowLeg.'+sd]=RX(kn)
+            loc['Foot.'+sd]=RX(.4*th/A-(th+kn))            # пятка-носок: носок вверх при выносе, вниз при отталкивании
+        htr=np.array([.022*k*np.sin(ph),-bob*(.6-.4*np.cos(2*ph)),0])
+        loc['Hips']=RY(.12*k*s)*RZ(.045*k*s)
+        loc['Spine']=RX(lean*.5)*RY(-.07*k*s)*RZ(-.03*k*s)
+        loc['Chest']=RX(lean*.5)*RY(-.10*k*s)*RZ(-.02*k*s)
+        loc['Neck']=RY(.03*k*s)
+        loc['Head']=RY(.02*k*s)*RX(-lean*.7+.025*k*np.cos(2*ph))     # голова стабилизируется против качки корпуса
+        gs=np.array([.012*k*np.sin(ph+.3),.014*k*np.cos(2*ph),.008*k*np.sin(2*ph)])
+    return arms(loc,htr,pose,gs),htr
 
 def die(t):
     k=min(1,t/1.2);e=k*k*(3-2*k)
@@ -113,12 +140,14 @@ def die(t):
 CLIPS={}
 def mk(name,T,fn,frames,loop=True):
     CLIPS[name]=(T,[fn(i/frames*T) for i in range(frames+1)],frames)
-mk('idle',3.0,lambda t:locomotion(t,0,0,0,0,0,'ready'),30)
-mk('aim_idle',3.0,lambda t:locomotion(t,0,0,0,0,0,'aim'),30)
-mk('walk',1.0,lambda t:locomotion(t,1.0,.45,.7,.012,.04,'ready'),30)
-mk('aim_walk',1.0,lambda t:locomotion(t,1.0,.45,.7,.012,.04,'aim'),30)
-mk('run',.64,lambda t:locomotion(t,.64,.85,1.35,.03,.22,'ready'),24)
-mk('aim_run',.64,lambda t:locomotion(t,.64,.85,1.35,.03,.22,'aim'),24)
+mk('idle',3.0,lambda t:locomotion(t,0,0,0,0,0,'ready','idle'),45)
+mk('aim_idle',3.0,lambda t:locomotion(t,0,0,0,0,0,'aim','idle'),45)
+mk('walk',1.0,lambda t:locomotion(t,1.0,.45,.75,.02,.05,'ready'),30)
+mk('aim_walk',1.0,lambda t:locomotion(t,1.0,.45,.75,.02,.05,'aim'),30)
+mk('run',.64,lambda t:locomotion(t,.64,.85,1.05,.045,.24,'ready'),24)
+mk('aim_run',.64,lambda t:locomotion(t,.64,.85,1.05,.045,.24,'aim'),24)
+mk('strafe_l',.8,lambda t:locomotion(t,.8,0,0,0,0,'aim','strafe',1),24)
+mk('strafe_r',.8,lambda t:locomotion(t,.8,0,0,0,0,'aim','strafe',-1),24)
 mk('die',1.2,die,24,loop=False)
 
 def skin(loc,htr):

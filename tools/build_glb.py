@@ -50,7 +50,7 @@ for name,(T,frames,nf) in CLIPS.items():
         q=np.array([f[0][n].as_quat() for f in frames],np.float32)
         for i in range(1,len(q)):
             if q[i]@q[i-1]<0:q[i]=-q[i]
-        if np.abs(q-q[0]).max()<1e-6 and n!='Hips':continue
+        if np.abs(q-q[0]).max()<1e-6 and n not in('Hips','Spine','Chest','Head','Neck'):continue
         samplers.append({'input':a_t,'output':put(q,5126,'VEC4'),'interpolation':'LINEAR'})
         channels.append({'sampler':len(samplers)-1,'target':{'node':BONE0+IDX[n],'path':'rotation'}})
     tr=np.array([(P0['Hips']+f[1])*S for f in frames],np.float32)
