@@ -1,6 +1,7 @@
 /* Service worker Voxel Strike: офлайн-запуск и быстрая загрузка.
-   При каждом обновлении игры поднимайте VERSION - старый кэш удалится сам. */
-const VERSION = 'vs-v1';
+   Свои файлы всегда берутся с сервера (кэш - только на случай отсутствия сети), поэтому VERSION менять при обновлении игры НЕ нужно.
+   Меняйте его лишь для того, чтобы принудительно сбросить кэш (например, при смене списка файлов или версии three.js). */
+const VERSION = 'vs-v2';
 const LOCAL = [
   './', './index.html', './manifest.json',
   './assets/models/soldier_glb.js',
@@ -37,29 +38,30 @@ self.addEventListener('fetch', e => {
   const same = url.origin === self.location.origin;
   if (!same && !CDN_HOSTS.includes(url.hostname)) return;     // всё прочее (WebRTC, аналитика) - мимо кэша
 
-  // страница: сначала сеть (чтобы обновления доходили сразу), без сети - из кэша
-  if (req.mode === 'navigate' || (same && /\/(index\.html)?$/.test(url.pathname))) {
+  // внешние скрипты зафиксированы по версии (three@0.128) - из кэша, обновлять их не нужно
+  if (!same) {
     e.respondWith((async () => {
+      const hit = await caches.match(req);
+      if (hit) return hit;
       try {
-        const r = await fetch(req.url, { cache: 'no-cache' });     // мимо HTTP-кэша GitHub Pages: обновления приходят сразу
-        if (r.ok) (await caches.open(VERSION)).put('./index.html', r.clone());
+        const r = await fetch(req);
+        if (r.ok && (r.type === 'basic' || r.type === 'cors')) (await caches.open(VERSION)).put(req, r.clone());
         return r;
-      } catch (_) {
-        return (await caches.match('./index.html')) || (await caches.match('./')) || Response.error();
-      }
+      } catch (_) { return Response.error(); }
     })());
     return;
   }
-  // остальное: из кэша, если нет - сеть и запоминаем
+  // свои файлы (страница, модель, иконки): сначала сеть - обновления игры приходят сами, без смены VERSION;
+  // без сети - из кэша, поэтому игра запускается офлайн
   e.respondWith((async () => {
-    const hit = await caches.match(req, { ignoreSearch: same });
-    if (hit) return hit;
+    const isPage = req.mode === 'navigate' || /\/(index\.html)?$/.test(url.pathname);
+    const key = isPage ? './index.html' : req;
     try {
-      const r = await fetch(req);
-      if (r.ok && (r.type === 'basic' || r.type === 'cors')) (await caches.open(VERSION)).put(req, r.clone());
+      const r = await fetch(isPage ? req.url : req, isPage ? { cache: 'no-cache' } : undefined);   // страница - мимо HTTP-кэша GitHub Pages
+      if (r.ok && (r.type === 'basic' || r.type === 'cors')) (await caches.open(VERSION)).put(key, r.clone());
       return r;
     } catch (_) {
-      return Response.error();
+      return (await caches.match(key, { ignoreSearch: true })) || (isPage && (await caches.match('./'))) || Response.error();
     }
   })());
 });
