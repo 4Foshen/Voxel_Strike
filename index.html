@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Voxel Strike — воксельный шутер</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#101418">
+<link rel="icon" href="data:,">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#101418;font-family:"Trebuchet MS","Segoe UI",Tahoma,sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
@@ -112,12 +116,79 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block}
 #streak{position:absolute;top:58px;left:12px;font:900 18px sans-serif;color:#ff5ad6;text-shadow:0 2px 0 #000}
 .slot.lock canvas{opacity:.25}
 .slot em.lk{position:absolute;bottom:0;left:0;right:0;font:700 9px sans-serif;text-align:center;background:rgba(0,0,0,.75);color:#ffb52e;font-style:normal}
+
+/* ===== Управление с телефона ===== */
+html{touch-action:manipulation;overscroll-behavior:none}
+body{-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+#tzone,#joy,#tbtns{display:none}
+#rotate{position:fixed;inset:0;z-index:300;background:#0b0f14;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:18px;font-size:20px;font-weight:800}
+#rotate small{display:block;font-size:14px;font-weight:600;opacity:.7;margin-top:6px}
+#rotate .ph{width:54px;height:92px;border:5px solid #fff;border-radius:10px;position:relative;animation:phRot 2.2s ease-in-out infinite}
+#rotate .ph::after{content:"";position:absolute;left:50%;bottom:5px;width:14px;height:4px;margin-left:-7px;background:#fff;border-radius:2px}
+@keyframes phRot{0%,15%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+body.portrait #rotate{display:flex}
+.touchhelp{display:none}
+body.touch .touchhelp{display:block}body.touch .kbhelp{display:none}
+body.touch{--b:min(19vmin,96px);--m:min(14vmin,72px);--s:min(11.5vmin,54px);--g:min(2.4vmin,14px);--sl:clamp(30px,8.5vmin,42px)}
+body.touch #tzone{display:block;position:absolute;inset:0;pointer-events:auto;touch-action:none}
+body.touch #joy{display:block;position:absolute;width:calc(var(--b)*1.7);height:calc(var(--b)*1.7);margin:calc(var(--b)*-.85) 0 0 calc(var(--b)*-.85);border-radius:50%;border:3px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);pointer-events:none;opacity:.55}
+body.touch #joy.on{opacity:1}
+body.touch #joyk{position:absolute;left:50%;top:50%;width:calc(var(--b)*.78);height:calc(var(--b)*.78);margin:calc(var(--b)*-.39) 0 0 calc(var(--b)*-.39);border-radius:50%;background:rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.7)}
+body.touch #tbtns{display:block;position:absolute;inset:0;pointer-events:none}
+.tb{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;pointer-events:auto;touch-action:none;cursor:pointer;border-radius:50%;background:rgba(20,26,34,.55);border:3px solid rgba(255,255,255,.5);color:#fff;font:800 12px "Trebuchet MS",sans-serif;line-height:1.05;text-shadow:0 1px 2px #000;user-select:none;-webkit-user-select:none}
+.tb.on,.tb.tog{background:rgba(255,255,255,.4);border-color:#fff}
+.tb b{display:block;font-size:11px;color:#ffe36b}
+.tb.fire{width:var(--b);height:var(--b);right:calc(var(--g)*1.5);bottom:calc(var(--g)*1.5);background:rgba(200,50,40,.5);border-color:#ffb0a8;font-size:14px}
+.tb.jump{width:var(--m);height:var(--m);right:calc(var(--g)*1.5 + (var(--b) - var(--m))/2);bottom:calc(var(--g)*2.5 + var(--b));font-size:22px}
+.tb.aim{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*2.5)}
+.tb.rel{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*3.5 + var(--m));font-size:22px}
+.tb.sm{position:static;width:var(--s);height:var(--s);font-size:10px;flex:none}
+#trow{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--sl) + 18px);display:flex;gap:6px;pointer-events:none}
+#ttop{position:absolute;top:8px;right:8px;display:flex;gap:6px;pointer-events:none}
+body:not(.ns) #tHook1{display:none}
+body.touch #hotbar,body.touch #blocks{pointer-events:auto;bottom:6px;gap:3px;padding:3px}
+body.touch .slot{width:var(--sl);height:var(--sl);border-width:2px}
+body.touch .slot span{display:none}
+body.touch .slot em.lk{font-size:7px}
+body.touch #blocks small{display:none}
+body.touch #health{left:8px;bottom:6px;width:128px}
+body.touch #health .lbl{font-size:13px;margin-bottom:2px}
+body.touch #health .bar{height:10px}
+body.touch #ammo{right:calc(var(--s)*3 + 26px);bottom:auto;top:8px}
+body.touch #wname{font-size:12px}
+body.touch #ammot{font-size:24px}
+body.touch #inv{display:none}
+body.touch #xp{bottom:auto;top:52px;width:200px;font-size:10px}
+body.touch #pups{left:8px;bottom:36px}
+body.touch #gas{left:8px;bottom:22px;width:128px}
+body.touch #killfeed{top:58px}
+body.touch #fps{top:4px;font-size:10px}
+body.touch #lb{top:22px;font-size:11px;min-width:110px}
+body.touch #pts{top:22px;font-size:13px}
+body.touch #streak{top:42px;font-size:14px}
+body.touch #score span{padding:3px 14px;font-size:20px;min-width:52px}
+body.touch #score{top:6px}
+body.touch #msg{top:55%;font-size:20px}
+body.touch #tab{width:min(560px,70vw);max-height:76vh;padding:8px 12px}
+body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0 -5px 0 rgba(0,0,0,.3),0 -12px 14px 2px rgba(14,18,24,.95)}
+@media (max-height:430px){body.touch .panel{padding:14px 20px}body.touch .panel h1{font-size:30px}body.touch .btn{padding:10px;font-size:17px}}
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
 
 <div id="hud" class="hidden">
+  <div id="tzone"></div><div id="joy"><div id="joyk"></div></div>
+  <div id="tbtns">
+    <div class="tb fire" id="tFire">ОГОНЬ</div><div class="tb aim" id="tAim">ЦЕЛЬ</div>
+    <div class="tb jump" id="tJump">▲</div><div class="tb rel" id="tRel">↻</div>
+    <div id="trow">
+      <div class="tb sm" id="tNade">Граната<b id="tgCnt"></b></div><div class="tb sm" id="tPad">Батут<b id="tpCnt"></b></div>
+      <div class="tb sm" id="tDash">Рывок</div><div class="tb sm" id="tSlide">Подкат</div>
+      <div class="tb sm" id="tInsp">Осмотр</div><div class="tb sm" id="tSwap">Смена</div><div class="tb sm" id="tHook1">Крюк 2</div>
+    </div>
+    <div id="ttop"><div class="tb sm" id="tBuild">Блоки</div><div class="tb sm" id="tTab">Счёт</div><div class="tb sm" id="tPause">II</div></div>
+  </div>
   <div id="scope" class="hidden"></div>
   <div id="damage"></div>
   <div id="flash"></div>
@@ -138,6 +209,8 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block}
   <div id="hotbar"></div><div id="blocks" class="hidden"></div>
 </div>
 
+<div id="rotate"><div class="ph"></div><div>Переверните телефон горизонтально<small>Игра рассчитана на альбомную ориентацию</small></div></div>
+
 <div id="menu" class="overlay">
   <div class="panel">
     <h1>VOXEL STRIKE</h1>
@@ -152,7 +225,8 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block}
     <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens" min="0.2" max="3" step="0.1" value="1"><b id="sensV">1.0</b></div>
     <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd" min="2" max="10" step="1" value="6"><b id="rdV">6</b></div>
     <button class="btn" id="play">Играть</button>
-    <div class="help"><b>C</b> подкат на бегу, <b>F</b> рывок, <b>G</b> граната, <b>E</b> поставить батут, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br>
+    <div class="help touchhelp"><b>Левый джойстик</b> — ходьба (до упора — бег), <b>свайп справа</b> — обзор, <b>ОГОНЬ</b> — стрельба (можно вести палец для обзора), <b>ЦЕЛЬ</b> — прицел (нажмите ещё раз, чтобы выключить), <b>▲</b> прыжок, <b>↻</b> перезарядка, кнопки внизу — граната, батут, рывок, подкат, осмотр, смена оружия; значки оружия внизу переключают его; <b>Блоки</b> — режим строительства (<b>ЦЕЛЬ</b> там ставит блок), <b>II</b> — пауза.</div>
+    <div class="help kbhelp"><b>C</b> подкат на бегу, <b>F</b> рывок, <b>G</b> граната, <b>E</b> поставить батут, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br>
       <b>WASD</b> ходьба, <b>Shift</b> бег, <b>Пробел</b> прыжок, <b>R</b> перезарядка<br>
       <b>ЛКМ</b> стрелять / ударить ножом, <b>ПКМ</b> прицелиться (у любого оружия; в режиме строительства — поставить блок), <b>V</b> осмотр оружия<br>
       <b>1–7</b> оружие (открывается с уровнем), <b>8</b> нож, <b>Q</b> прошлое оружие<br><b>B</b> открыть/закрыть панель блоков (там клавиши 1–8 и колесо выбирают блок, ЛКМ копает, ПКМ ставит), <b>Esc</b> пауза<br>За убийства, хедшоты и серии даются очки и опыт: растите уровень и открывайте новое оружие
@@ -1172,7 +1246,7 @@ const NET={
 function onNetLost(){
   if(!$('net').classList.contains('hidden')){$('netStatus').textContent='Соединение потеряно';return;}
   if(G.state==='menu')return;
-  G.state='ended';document.exitPointerLock&&document.exitPointerLock();
+  G.state='ended';releaseLock();
   $('endT').textContent='Соединение потеряно';$('endT').style.color='#ff7a6b';$('endS').textContent='Соперник отключился.';
   $('end').classList.remove('hidden');$('pause').classList.add('hidden');$('scope').classList.add('hidden');
 }
@@ -1314,6 +1388,9 @@ const Prog={
 const G={state:'menu',mode:'tdm',map:0,ns:false,team:0,score:[0,0],target:20,sens:1,rd:6,seed:1,ready:false};
 const keys={};
 const mouse={left:false,right:false,pressT:0,placeCD:0};
+// телефон: сенсорные элементы управления вместо клавиатуры/мыши (нет pointer lock - блокировку эмулируем)
+const TOUCH=(()=>{try{if(/[?&]touch=1/.test(location.search))return true;return navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches;}catch(e){return false;}})();
+const touchMove={x:0,y:0};let fakeLock=false;
 
 const WDEF=[
  {name:'Пистолет',dmg:22,interval:.2,auto:false,mag:12,reserve:60,spread:.010,pellets:1,recoil:.020,reload:1.2,snd:'pistol',range:90,unlock:1},
@@ -1439,6 +1516,7 @@ const UI={
       if(sl1.t==='w'){const l=document.createElement('em');l.className='lk';d.appendChild(l);sl1.lk=l;}
       hb.appendChild(d);sl1.el=d;
       d.addEventListener('mousedown',e=>e.stopPropagation());
+      d.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();selectSlot(i);});
     });
     const bb=$('blocks');bb.innerHTML='<small>Блоки: 1–8 или колесо · B — назад к оружию</small>';
     BLOCK_LIST.forEach((id,i)=>{
@@ -1446,7 +1524,7 @@ const UI={
       const cv=document.createElement('canvas');cv.width=cv.height=40;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
       const tile=BLOCKS[id].side;g.drawImage(Atlas.canvas,(tile&3)*16,(tile>>2)*16,16,16,4,4,32,32);
       const k=document.createElement('span');k.textContent=i+1;d.appendChild(cv);d.appendChild(k);bb.appendChild(d);
-      d.addEventListener('mousedown',e=>{e.stopPropagation();Player.block=id;UI.refreshSel();});
+      d.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();Player.block=id;UI.refreshSel();});
     });
     this.refreshIcons();this.refreshSel();
   },
@@ -1480,8 +1558,8 @@ const UI={
     const hb=$('hpb');const w=clamp(P.hp,0,100)+'%';if(this.cache.hpw!==w){this.cache.hpw=w;hb.style.width=w;hb.style.background=P.hp>50?'#58c24a':(P.hp>25?'#e0b030':'#d8402e');}
     if(s.t==='w'){
       const st=wstate[s.id];this.set('wname',WDEF[s.id].name+(P.reloadT>0?' (перезарядка)':''));
-      const h=WDEF[s.id].melee?'melee':st.mag+'|'+st.reserve;if(this.cache.am!==h){this.cache.am=h;$('ammot').innerHTML=WDEF[s.id].melee?'<small>V — осмотр</small>':st.mag+' <small>/ '+st.reserve+'</small>';}
-    }else{this.set('wname','Строительство: '+BLOCKS[P.block].name);const h='b';if(this.cache.am!==h){this.cache.am=h;$('ammot').innerHTML='<small>Q — след. блок · B — выйти</small>';}}
+      const h=WDEF[s.id].melee?'melee':st.mag+'|'+st.reserve;if(this.cache.am!==h){this.cache.am=h;$('ammot').innerHTML=WDEF[s.id].melee?(TOUCH?'':'<small>V — осмотр</small>'):st.mag+' <small>/ '+st.reserve+'</small>';}
+    }else{this.set('wname','Строительство: '+BLOCKS[P.block].name);const h='b';if(this.cache.am!==h){this.cache.am=h;$('ammot').innerHTML=TOUCH?'':'<small>Q — след. блок · B — выйти</small>';}}
     if(G.mode==='ffa'){
       let best=0;for(const e of Bots)best=Math.max(best,G.score[e.team]||0);
       this.set('sr',String(G.score[P.team]||0));this.set('sb',String(best));
@@ -1494,6 +1572,7 @@ const UI={
     let ph='';for(const pu of PU)if(pu.dur&&Pw.t[pu.k]>0)ph+='<div class="pu" style="border-color:'+pu.css+'">'+pu.name+'<b>'+Math.ceil(Pw.t[pu.k])+'</b></div>';
     if(this.cache.pu!==ph){this.cache.pu=ph;$('pups').innerHTML=ph;}
     this.set('inv','Граната [G] '+P.gren+'  ·  Батут [E] '+P.pads+'  ·  Подкат [C]  ·  Рывок [F] '+(P.dashCD>0?(Math.ceil(P.dashCD*10)/10).toFixed(1)+'с':'готов'));
+    this.set('tgCnt',String(P.gren));this.set('tpCnt',String(P.pads));
     this.set('streak',(Reward.streak>=2?'Серия x'+Reward.streak:'')+(P.rage>0?'  ЯРОСТЬ '+Math.ceil(P.rage)+'с':''));
     const need=Prog.need(Prog.level),cur=Prog.xp-Prog.cum(Prog.level);
     this.set('xpt','Уровень '+Prog.level+' · '+cur+' / '+need+' XP');
@@ -1979,7 +2058,7 @@ function selectSlot(i){
   if(G.ns&&sl1.t==='w'&&sl1.id!==3)return;
   if(sl1.t==='w'&&Prog.level<WDEF[sl1.id].unlock&&!(WDEF[sl1.id].rocket&&Pw.on('storm'))&&!(G.ns&&sl1.id===3)){UI.msg('Оружие откроется на уровне '+WDEF[sl1.id].unlock,1.6);return;}
   if(SLOTS[Player.sel].t==='w')prevSel=Player.sel;
-  Player.sel=i;Player.reloadT=0;Player.swapT=.3;Player.zoom=0;Player.ads=0;Player.inspT=0;UI.refreshSel();
+  Player.sel=i;Player.reloadT=0;Player.swapT=.3;Player.zoom=0;Player.ads=0;Player.inspT=0;if(TOUCH){mouse.right=false;const ta=$('tAim');if(ta)ta.classList.remove('tog');}UI.refreshSel();
 }
 function toggleBuild(){
   if(SLOTS[Player.sel].t==='b')selectSlot(prevSel);else selectSlot(NW);
@@ -2104,8 +2183,8 @@ function updatePlayer(dt){
   P.ads=approach(P.ads,wantAds?1:0,dt*9);
   // движение
   const sy=Math.sin(P.yaw),cy=Math.cos(P.yaw);
-  const fi=(keys.KeyW?1:0)-(keys.KeyS?1:0),ri=(keys.KeyD?1:0)-(keys.KeyA?1:0);
-  let wx=-sy*fi+cy*ri,wz=-cy*fi-sy*ri;const wl=Math.hypot(wx,wz);if(wl>0){wx/=wl;wz/=wl;}
+  const fi=clamp((keys.KeyW?1:0)-(keys.KeyS?1:0)+touchMove.y,-1,1),ri=clamp((keys.KeyD?1:0)-(keys.KeyA?1:0)+touchMove.x,-1,1);
+  let wx=-sy*fi+cy*ri,wz=-cy*fi-sy*ri;const wl=Math.hypot(wx,wz);if(wl>1){wx/=wl;wz/=wl;}   // аналоговый джойстик: неполный наклон = медленнее
   const sprint=(keys.ShiftLeft||keys.ShiftRight)&&fi>0&&P.zoom<.1&&P.ads<.1;
   if(P.inspT>0){P.inspT-=dt;if(mouse.left||sprint||P.reloadT>0||P.swapT>0||P.ads>.05||!P.onGround)P.inspT=0;}
   const spm=Pw.on('speed')?1.4:1,hs0=Math.hypot(P.vx,P.vz);
@@ -2121,7 +2200,7 @@ function updatePlayer(dt){
   // рывок (F): мгновенный бросок в сторону движения
   if(P.wantDash){P.wantDash=false;
     if(P.dashCD<=0&&P.dashT<=0){
-      P.ddx=wl>0?wx:-sy;P.ddz=wl>0?wz:-cy;P.dashT=.2;P.dashCD=Pw.on('speed')?1.0:1.8;P.slideT=0;
+      P.ddx=wl>0?wx/wl:-sy;P.ddz=wl>0?wz/wl:-cy;P.dashT=.2;P.dashCD=Pw.on('speed')?1.0:1.8;P.slideT=0;
       Sfx.play('dash',1);Fx.fov=Math.max(Fx.fov,9);
     }
   }
@@ -2206,7 +2285,7 @@ function kill(v,k,head,wname){
   v.alive=false;v.hp=0;v.respawnT=3;v.deaths++;if(k&&k!==v)k.kills++;
   const dist=k?Math.hypot(v.x-k.x,v.y-k.y,v.z-k.z):0;
   if(v.isPlayer){
-    Pw.clear();Hooks.clear();Player.killer=k?k.name:'неизвестный';Player.killerRef=k;Sfx.play('die');Player.vy=2;mouse.left=false;Player.zoom=0;
+    Pw.clear();Hooks.clear();Player.killer=k?k.name:'неизвестный';Player.killerRef=k;Sfx.play('die');Player.vy=2;mouse.left=false;Player.zoom=0;if(TOUCH){mouse.right=false;const ta=$('tAim');if(ta)ta.classList.remove('tog');}
     Reward.streak=0;Reward.multiN=0;Reward.multiT=0;Player.rage=0;Fx.shake=.6;Fx.flash=.5;Fx.flashCol='#a00000';
   }else{v.group.visible=false;Fx.gibs(v,head);Fx.blood(v.x,v.y,v.z);}
   const kt=G.mode==='ffa'?((k&&k!==v)?k.team:-1):(k?k.team:1-v.team);if(kt>=0)G.score[kt]++;
@@ -2219,7 +2298,7 @@ function kill(v,k,head,wname){
 }
 function endGame(winTeam){
   G.state='ended';
-  document.exitPointerLock&&document.exitPointerLock();
+  releaseLock();
   const win=winTeam===Player.team,bonus=win?500:150,lv0=Prog.level;
   let scTxt;
   if(G.mode==='ffa'){const r=ENT.slice().sort((a,b)=>G.score[b.team]-G.score[a.team]);scTxt='Ваше место: '+(r.indexOf(Player)+1)+' из '+r.length+'<br>'+r.slice(0,3).map((e,i)=>(i+1)+'. '+e.name+' — '+G.score[e.team]).join(', ');}
@@ -2240,7 +2319,7 @@ let renderer,camera,sky,sun,clouds=[];
 function initThree(){
   const cv=$('game');
   renderer=new THREE.WebGLRenderer({canvas:cv,antialias:false,powerPreference:'high-performance'});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,TOUCH?1:1.5));
   renderer.autoClear=false;
   scene=new THREE.Scene();
   const horizon=new THREE.Color(0xbcd9f5);
@@ -2490,6 +2569,7 @@ async function startGame(){
     b.alive=false;b.group.visible=false;b.hp=100;
   });
   $('lb').classList.toggle('hidden',G.mode!=='ffa');UI.cache.lb='';
+  document.body.classList.toggle('ns',!!G.ns);$('tAim').textContent=G.ns?'Крюк 1':'ЦЕЛЬ';if(TOUCH)Touch.reset();
   for(const e of[Player,Remote,...Bots]){e.kills=0;e.deaths=0;}
   Pw.clear();Pads.clear();Grenades.clear();Pickups.reset(G.mode==='duel'?G.seed:0);Player.pads=2;Player.gren=3;Player.dashCD=0;Player.gCD=0;
   ENT=G.mode==='duel'?[Player,Remote]:[Player,...Bots];Player.alive=false;
@@ -2513,35 +2593,40 @@ async function startGame(){
   $('msg').textContent='';$('killfeed').innerHTML='';
   $('loading').classList.add('hidden');$('hud').classList.remove('hidden');
   G.ready=true;acc=0;last=performance.now();
-  G.state=document.pointerLockElement===$('game')?'playing':'paused';
+  G.state=isLocked()?'playing':'paused';
   if(G.state==='paused')$('pause').classList.remove('hidden');
   {const h=document.querySelector('#pause h2');if(h)h.textContent=NET.on?'Матч идёт — нажмите «Продолжить»':'Пауза';}
 }
-function requestLock(){const c=$('game');if(c.requestPointerLock)c.requestPointerLock();}
-
-document.addEventListener('pointerlockchange',()=>{
-  const locked=document.pointerLockElement===$('game');
+const isLocked=()=>TOUCH?fakeLock:document.pointerLockElement===$('game');
+function setLocked(locked){
   if(locked){
     if(G.state==='paused'){G.state='playing';$('pause').classList.add('hidden');last=performance.now();}
   }else if(G.state==='playing'){
     G.state='paused';mouse.left=mouse.right=false;if(NET.on)for(const k in keys)keys[k]=false;
     $('sens2').value=G.sens;$('sens2V').textContent=G.sens.toFixed(1);$('rd2').value=G.rd;$('rd2V').textContent=G.rd;
     $('pause').classList.remove('hidden');
+    if(TOUCH)Touch.reset();
   }
-});
+}
+function requestLock(){
+  if(TOUCH){fakeLock=true;enterFullscreen();setLocked(true);return;}
+  const c=$('game');if(c.requestPointerLock)c.requestPointerLock();
+}
+function releaseLock(){if(TOUCH){fakeLock=false;return;}document.exitPointerLock&&document.exitPointerLock();}
+document.addEventListener('pointerlockchange',()=>{if(!TOUCH)setLocked(document.pointerLockElement===$('game'));});
 document.addEventListener('mousemove',e=>{
-  if(G.state!=='playing'||document.pointerLockElement!==$('game'))return;
+  if(TOUCH||G.state!=='playing'||!isLocked())return;
   const P=Player;if(!P.alive)return;
   const k=.0022*G.sens*Math.max(.42,Math.pow(camera.fov/75,.7));
   P.yaw-=e.movementX*k;P.pitch=clamp(P.pitch-e.movementY*k,-1.55,1.55);
 });
 document.addEventListener('mousedown',e=>{
-  if(G.state!=='playing'||document.pointerLockElement!==$('game'))return;
+  if(TOUCH||G.state!=='playing'||!isLocked())return;
   if(e.button===0){mouse.left=true;mouse.pressT=.15;}
   else if(e.button===2){mouse.right=true;Hooks.fire(0);}
   e.preventDefault();
 });
-document.addEventListener('mouseup',e=>{if(e.button===0)mouse.left=false;else if(e.button===2){mouse.right=false;Hooks.release(0);}});
+document.addEventListener('mouseup',e=>{if(TOUCH)return;if(e.button===0)mouse.left=false;else if(e.button===2){mouse.right=false;Hooks.release(0);}});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('wheel',e=>{
   if(G.state!=='playing')return;
@@ -2563,6 +2648,105 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyZ')Hooks.release(1);});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;mouse.left=mouse.right=false;});
 window.addEventListener('resize',()=>{if(renderer)onResize();});
+
+/* =====================================================================
+   Управление с телефона: плавающий джойстик слева, обзор свайпом справа, кнопки
+   ===================================================================== */
+function enterFullscreen(){
+  try{
+    const d=document.documentElement;
+    if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});
+  }catch(e){}
+}
+const Touch={
+  jid:null,jx:0,jy:0,lid:null,lx:0,ly:0,
+  radius(){return Math.min(66,Math.max(42,Math.min(innerWidth,innerHeight)*.14));},
+  home(){return{x:Math.max(90,innerWidth*.12),y:innerHeight-Math.max(105,innerHeight*.32)};},
+  placeJoy(x,y,on){const j=$('joy');j.style.left=x+'px';j.style.top=y+'px';j.classList.toggle('on',!!on);},
+  stick(dx,dy){
+    const r=this.radius(),l=Math.hypot(dx,dy);
+    if(l>r){dx*=r/l;dy*=r/l;}
+    const k=$('joyk');k.style.transform='translate('+dx+'px,'+dy+'px)';
+    const n=Math.min(1,l/r),m=Math.max(0,(n-.14)/.86);
+    if(l>0){touchMove.x=dx/Math.max(1,Math.min(l,r))*m;touchMove.y=-dy/Math.max(1,Math.min(l,r))*m;}else{touchMove.x=touchMove.y=0;}
+    keys.ShiftLeft=n>.88&&touchMove.y>.5;      // стик почти до края и вперёд - бег
+  },
+  look(dx,dy){
+    if(G.state!=='playing')return;const P=Player;if(!P.alive)return;
+    const k=.0022*G.sens*2.3*Math.max(.42,Math.pow(camera.fov/75,.7));
+    P.yaw-=dx*k;P.pitch=clamp(P.pitch-dy*k,-1.55,1.55);
+  },
+  reset(){
+    this.jid=this.lid=null;touchMove.x=touchMove.y=0;keys.ShiftLeft=keys.Space=false;mouse.left=mouse.right=false;keys.Tab=false;
+    $('joyk').style.transform='';const h=this.home();this.placeJoy(h.x,h.y,false);
+    for(const el of document.querySelectorAll('.tb'))el.classList.remove('on','tog');
+    Hooks.release&&(Hooks.release(0),Hooks.release(1));
+  },
+  bind(id,down,up,drag){
+    const el=$(id);let pid=null,lx=0,ly=0;
+    el.addEventListener('pointerdown',e=>{
+      e.preventDefault();e.stopPropagation();
+      if(G.state!=='playing'&&id!=='tPause')return;
+      pid=e.pointerId;try{el.setPointerCapture(e.pointerId);}catch(_){}
+      lx=e.clientX;ly=e.clientY;if(!el.classList.contains('keep'))el.classList.add('on');if(down)down(el);
+    });
+    el.addEventListener('pointermove',e=>{if(drag&&e.pointerId===pid){e.preventDefault();this.look(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;}});
+    const end=e=>{if(e.pointerId!==pid)return;pid=null;if(!el.classList.contains('keep'))el.classList.remove('on');if(up)up(el);};
+    el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  },
+  init(){
+    document.body.classList.add('touch');
+    const zone=$('tzone');
+    zone.addEventListener('pointerdown',e=>{
+      e.preventDefault();if(G.state!=='playing')return;
+      try{zone.setPointerCapture(e.pointerId);}catch(_){}
+      if(e.clientX<innerWidth*.45&&this.jid===null){this.jid=e.pointerId;this.jx=e.clientX;this.jy=e.clientY;this.placeJoy(e.clientX,e.clientY,true);this.stick(0,0);}
+      else if(this.lid===null){this.lid=e.pointerId;this.lx=e.clientX;this.ly=e.clientY;}
+    });
+    zone.addEventListener('pointermove',e=>{
+      e.preventDefault();
+      if(e.pointerId===this.jid)this.stick(e.clientX-this.jx,e.clientY-this.jy);
+      else if(e.pointerId===this.lid){this.look(e.clientX-this.lx,e.clientY-this.ly);this.lx=e.clientX;this.ly=e.clientY;}
+    });
+    const end=e=>{
+      if(e.pointerId===this.jid){this.jid=null;touchMove.x=touchMove.y=0;keys.ShiftLeft=false;$('joyk').style.transform='';const h=this.home();this.placeJoy(h.x,h.y,false);}
+      else if(e.pointerId===this.lid)this.lid=null;
+    };
+    zone.addEventListener('pointerup',end);zone.addEventListener('pointercancel',end);
+    // кнопки
+    const aim=$('tAim');
+    this.bind('tFire',()=>{mouse.left=true;mouse.pressT=.15;},()=>{mouse.left=false;},true);
+    this.bind('tAim',()=>{
+      if(G.ns||SLOTS[Player.sel].t==='b'){mouse.right=true;Hooks.fire(0);aim.classList.add('hold');}   // крюк / поставить блок: пока держите
+      else{mouse.right=!mouse.right;aim.classList.toggle('tog',mouse.right);}                           // прицел: нажать - включить, ещё раз - выключить
+    },()=>{if(aim.classList.contains('hold')){aim.classList.remove('hold');mouse.right=false;Hooks.release(0);}});
+    this.bind('tJump',()=>{keys.Space=true;},()=>{keys.Space=false;});
+    this.bind('tRel',()=>startReload());
+    this.bind('tNade',()=>throwGrenade());this.bind('tPad',()=>placePad());
+    this.bind('tDash',()=>{Player.wantDash=true;});this.bind('tSlide',()=>{Player.wantSlide=true;});
+    this.bind('tInsp',()=>inspect());
+    this.bind('tSwap',()=>{if(SLOTS[Player.sel].t==='b')cycleBlock(1);else if(prevSel!==Player.sel)selectSlot(prevSel);else cycleSlot(1);});
+    this.bind('tHook1',()=>Hooks.fire(1),()=>Hooks.release(1));
+    this.bind('tBuild',()=>toggleBuild());
+    this.bind('tTab',()=>{keys.Tab=!keys.Tab;$('tTab').classList.toggle('tog',!!keys.Tab);},null);$('tTab').classList.add('keep');
+    this.bind('tPause',()=>{if(G.state==='playing'){fakeLock=false;setLocked(false);}});
+    const h=this.home();this.placeJoy(h.x,h.y,false);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.state==='playing'){fakeLock=false;setLocked(false);}});
+    document.addEventListener('gesturestart',e=>e.preventDefault());
+  }
+};
+function checkOrient(){
+  const portrait=TOUCH&&innerHeight>innerWidth;
+  document.body.classList.toggle('portrait',portrait);
+  if(portrait&&G.state==='playing'){fakeLock=false;setLocked(false);}
+  if(TOUCH&&!portrait){const h=Touch.home();if(Touch.jid===null)Touch.placeJoy(h.x,h.y,false);}
+}
+if(TOUCH){
+  Touch.init();
+  window.addEventListener('resize',checkOrient);window.addEventListener('orientationchange',checkOrient);checkOrient();
+  G.rd=4;$('rd').value=4;$('rdV').textContent=4;$('rd2').value=4;$('rd2V').textContent=4;
+}
+if(/[?&]debug=1/.test(location.search))window.__vs={G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,get TOUCH(){return TOUCH;}};
 
 // меню
 for(let i=0;i<4;i++)$('map'+i).onclick=()=>{G.map=i;for(let j=0;j<4;j++)$('map'+j).classList.toggle('on',j===i);};
