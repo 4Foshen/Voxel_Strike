@@ -17,6 +17,14 @@ def put(arr,ctype,typ,target=None,minmax=False,norm=False):
 N=len(NAMES)
 pts=(PTS*S).astype(np.float32)
 a_pos=put(pts,5126,'VEC3',34962,True)
+# направление обводки врагов: от оси своей кости к вершине (гладко и всегда наружу, в отличие от нормалей прореженного меша)
+vn=np.zeros((len(pts),3))
+for bi,nm in enumerate(NAMES):
+    m=top[:,0]==bi
+    if not m.any():continue
+    sa,sb,_=segs[nm];ab=sb-sa;tt=np.clip(((PTS[m]-sa)@ab)/(ab@ab),0,1);vn[m]=PTS[m]-(sa+tt[:,None]*ab)
+vn/=np.maximum(np.linalg.norm(vn,axis=1,keepdims=True),1e-9)
+a_nrm=put(vn.astype(np.float32),5126,'VEC3',34962)
 rgba=np.concatenate([np.clip(COL*255,0,255).astype(np.uint8),np.full((len(COL),1),255,np.uint8)],1)
 a_col=put(rgba,5121,'VEC4',34962,norm=True)
 a_j=put(top.astype(np.uint8),5121,'VEC4',34962)
@@ -58,7 +66,7 @@ for name,(T,frames,nf) in CLIPS.items():
     channels.append({'sampler':len(samplers)-1,'target':{'node':BONE0+IDX['Hips'],'path':'translation'}})
     anims.append({'name':name,'samplers':samplers,'channels':channels})
 g={'asset':{'version':'2.0','generator':'voxel-strike rig.py'},'scene':0,'scenes':[{'nodes':[0]}],'nodes':nodes,
- 'meshes':[{'name':'Body','primitives':[{'attributes':{'POSITION':a_pos,'COLOR_0':a_col,'JOINTS_0':a_j,'WEIGHTS_0':a_w},'indices':a_i,'material':0}]}],
+ 'meshes':[{'name':'Body','primitives':[{'attributes':{'POSITION':a_pos,'NORMAL':a_nrm,'COLOR_0':a_col,'JOINTS_0':a_j,'WEIGHTS_0':a_w},'indices':a_i,'material':0}]}],
  'skins':[{'joints':[BONE0+i for i in range(N)],'inverseBindMatrices':a_ibm,'skeleton':BONE0+IDX['Hips']}],
  'materials':[{'name':'Soldier','pbrMetallicRoughness':{'baseColorFactor':[1,1,1,1],'metallicFactor':0,'roughnessFactor':1},'extensions':{'KHR_materials_unlit':{}}}],
  'extensionsUsed':['KHR_materials_unlit'],

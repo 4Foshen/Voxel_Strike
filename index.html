@@ -121,6 +121,10 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block}
 .slot.lock canvas{opacity:.25}
 .slot em.lk{position:absolute;bottom:0;left:0;right:0;font:700 9px sans-serif;text-align:center;background:rgba(0,0,0,.75);color:#ffb52e;font-style:normal}
 
+.lo{margin:6px 0 12px}.lo .r2{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:15px}.lo .r2 label{width:110px;opacity:.85}
+.lo select{flex:1;background:#0b0f14;color:#fff;border:2px solid #4a5563;padding:8px;font:700 15px "Trebuchet MS",sans-serif;border-radius:4px}
+.lo select option:disabled{color:#777}.lo .fixed{flex:1;padding:8px;border:2px dashed #3b4450;border-radius:4px;opacity:.8;font-weight:700}
+.btnrow{display:flex;gap:8px}.btnrow .btn{margin-top:4px}
 /* ===== Управление с телефона ===== */
 html{touch-action:manipulation;overscroll-behavior:none}
 body{-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
@@ -143,6 +147,7 @@ body.touch #tbtns{display:block;position:absolute;inset:0;pointer-events:none}
 .tb.on,.tb.tog{background:rgba(255,255,255,.4);border-color:#fff}
 .tb b{display:block;font-size:11px;color:#ffe36b}
 .tb.fire{width:var(--b);height:var(--b);right:calc(var(--g)*1.5);bottom:calc(var(--g)*1.5);background:rgba(200,50,40,.5);border-color:#ffb0a8;font-size:14px}
+.tb.fire2{width:calc(var(--b)*1.05);height:calc(var(--b)*1.05);left:calc(var(--g)*1.5);top:84px;background:rgba(200,50,40,.42);border-color:#ffb0a8;font-size:13px}
 .tb.jump{width:var(--m);height:var(--m);right:calc(var(--g)*1.5 + (var(--b) - var(--m))/2);bottom:calc(var(--g)*2.5 + var(--b));font-size:22px}
 .tb.aim{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*2.5)}
 .tb.rel{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*3.5 + var(--m));font-size:22px}
@@ -150,6 +155,7 @@ body.touch #tbtns{display:block;position:absolute;inset:0;pointer-events:none}
 #trow{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--sl) + 18px);display:flex;gap:6px;pointer-events:none}
 #ttop{position:absolute;top:8px;right:8px;display:flex;gap:6px;pointer-events:none}
 body:not(.ns) #tHook1{display:none}
+#tDash,#tPad,#tInsp{display:none}
 body.touch #hotbar,body.touch #blocks{pointer-events:auto;bottom:6px;gap:3px;padding:3px}
 body.touch .slot{width:var(--sl);height:var(--sl);border-width:2px}
 body.touch .slot span{display:none}
@@ -184,7 +190,7 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
 <div id="hud" class="hidden">
   <div id="tzone"></div><div id="joy"><div id="joyk"></div></div>
   <div id="tbtns">
-    <div class="tb fire" id="tFire">ОГОНЬ</div><div class="tb aim" id="tAim">ЦЕЛЬ</div>
+    <div class="tb fire" id="tFire">ОГОНЬ</div><div class="tb fire2" id="tFire2">ОГОНЬ</div><div class="tb aim" id="tAim">ЦЕЛЬ</div>
     <div class="tb jump" id="tJump">▲</div><div class="tb rel" id="tRel">↻</div>
     <div id="trow">
       <div class="tb sm" id="tNade">Граната<b id="tgCnt"></b></div><div class="tb sm" id="tPad">Батут<b id="tpCnt"></b></div>
@@ -225,18 +231,15 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
     <div>Карта</div>
     <div class="maps"><button class="on" id="map0">Холмы</button><button id="map1">Пустыня</button><button id="map2">Арена</button><button id="map3">Горы</button></div>
     <div>Режим</div>
-    <div class="teams"><button class="m on" id="modeT">Команды (до 20)</button><button class="m" id="modeF">Каждый сам за себя (до 15)</button><button class="m" id="modeN">1 на 1 по сети (до 10)</button><button class="m" id="modeS">Ноу-скоп + гарпуны (до 15)</button><button class="m" id="modeD">1 на 1 по сети: ноу-скоп + гарпуны (до 10)</button></div>
+    <div class="teams"><button class="m on" id="modeT">Команды с ботами (до 20)</button><button class="m" id="modeF">FFA с ботами (до 15)</button><button class="m" id="modeN">Сетевая 1 на 1 (до 10)</button></div>
     <div id="teamPick"><div>Ваша команда</div>
     <div class="teams"><button class="r on" id="teamR">Красные</button><button class="b" id="teamB">Синие</button></div></div>
+    <div id="loMenuBox"><div>Снаряжение <small style="opacity:.6">— остальное оружие открывается с уровнем</small></div><div class="lo" id="loMenu"></div></div>
     <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens" min="0.2" max="3" step="0.1" value="1"><b id="sensV">1.0</b></div>
     <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd" min="2" max="10" step="1" value="6"><b id="rdV">6</b></div>
     <button class="btn" id="play">Играть</button>
-    <div class="help touchhelp"><b>Левый джойстик</b> — ходьба (до упора — бег), <b>свайп справа</b> — обзор, <b>ОГОНЬ</b> — стрельба (можно вести палец для обзора), <b>ЦЕЛЬ</b> — прицел (нажмите ещё раз, чтобы выключить), <b>▲</b> прыжок, <b>↻</b> перезарядка, кнопки внизу — граната, батут, рывок, подкат, осмотр, смена оружия; значки оружия внизу переключают его; <b>Блоки</b> — режим строительства (<b>ЦЕЛЬ</b> там ставит блок), <b>II</b> — пауза.</div>
-    <div class="help kbhelp"><b>C</b> подкат на бегу, <b>F</b> рывок, <b>G</b> граната, <b>E</b> поставить батут, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br>
-      <b>WASD</b> ходьба, <b>Shift</b> бег, <b>Пробел</b> прыжок, <b>R</b> перезарядка<br>
-      <b>ЛКМ</b> стрелять / ударить ножом, <b>ПКМ</b> прицелиться (у любого оружия; в режиме строительства — поставить блок), <b>V</b> осмотр оружия<br>
-      <b>1–7</b> оружие (открывается с уровнем), <b>8</b> нож, <b>Q</b> прошлое оружие<br><b>B</b> открыть/закрыть панель блоков (там клавиши 1–8 и колесо выбирают блок, ЛКМ копает, ПКМ ставит), <b>Esc</b> пауза<br>За убийства, хедшоты и серии даются очки и опыт: растите уровень и открывайте новое оружие
-    </div>
+    <div class="help touchhelp"><b>Левый джойстик</b> — ходьба (до упора — бег), <b>свайп справа</b> — обзор, <b>ОГОНЬ</b> справа и <b>ОГОНЬ</b> слева сверху — стрельба (так можно играть тремя пальцами: джойстик, обзор и огонь), <b>ЦЕЛЬ</b> — прицел (нажмите ещё раз, чтобы выключить), <b>▲</b> прыжок, <b>↻</b> перезарядка, внизу — граната, подкат и смена оружия; значки оружия переключают его; <b>Блоки</b> — режим строительства (<b>ЦЕЛЬ</b> там ставит блок), <b>II</b> — пауза. Включён лёгкий автоприцел.</div>
+    <div class="help kbhelp"><b>C</b> подкат на бегу, <b>G</b> граната, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br><b>WASD</b> ходьба, <b>Shift</b> бег, <b>Пробел</b> прыжок, <b>R</b> перезарядка<br><b>ЛКМ</b> стрелять или копать, <b>ПКМ</b> прицелиться (в режиме строительства — поставить блок)<br><b>1–3</b> оружие из вашего набора (меню «Снаряжение» и пауза), <b>Q</b> прошлое оружие, <b>B</b> панель блоков (там 1–8 и колесо выбирают блок), колесо мыши листает оружие, <b>Esc</b> пауза<br>За убийства, хедшоты и серии даются очки и опыт: растите уровень и открывайте новое оружие</div>
   </div>
 </div>
 
@@ -245,6 +248,7 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
     <h2>Пауза</h2>
     <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens2" min="0.2" max="3" step="0.1" value="1"><b id="sens2V">1.0</b></div>
     <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd2" min="2" max="10" step="1" value="6"><b id="rd2V">6</b></div>
+    <div id="loPauseBox"><div style="margin-top:8px">Снаряжение</div><div class="lo" id="loPause"></div></div>
     <button class="btn" id="resume">Продолжить</button>
   </div>
 </div>
@@ -261,14 +265,14 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
   <div class="panel">
     <h2>Игра 1 на 1 по сети</h2>
     <div class="sub">Соединение напрямую между браузерами (WebRTC), сервер не нужен. Обменяйтесь двумя кодами через любой мессенджер.</div>
-    <div id="netChoose"><button class="btn" id="netHost">Создать игру</button><button class="btn" id="netJoin" style="background:#2b62c4">Присоединиться по коду</button></div>
+    <div id="netChoose"><div>Создать игру — выберите режим:</div><button class="btn" id="netHostStd">Стандарт</button><button class="btn" id="netHostNs" style="background:#8a5a1a">Ноу-скоп + крюки</button><button class="btn" id="netJoin" style="background:#2b62c4">Присоединиться по коду</button></div>
     <div id="netHostBox" class="hidden">
-      <div>1. Отправьте этот код сопернику:</div><textarea id="codeOut" readonly></textarea><button class="btn sm" id="copyOut">Копировать</button>
-      <div style="margin-top:10px">2. Вставьте ответный код соперника:</div><textarea id="codeIn"></textarea><button class="btn" id="netConnect">Подключиться</button>
+      <div>1. Отправьте этот код сопернику:</div><textarea id="codeOut" readonly></textarea><div class="btnrow"><button class="btn sm" id="copyOut">Копировать</button><button class="btn sm" id="shareOut">Поделиться</button></div>
+      <div style="margin-top:10px">2. Вставьте ответный код соперника:</div><textarea id="codeIn"></textarea><div class="btnrow"><button class="btn sm" id="pasteIn">Вставить из буфера</button></div><button class="btn" id="netConnect">Подключиться</button>
     </div>
     <div id="netJoinBox" class="hidden">
-      <div>1. Вставьте код хоста:</div><textarea id="joinIn"></textarea><button class="btn" id="netAnswer">Создать ответ</button>
-      <div id="answerBox" class="hidden"><div style="margin-top:10px">2. Отправьте этот ответ хосту:</div><textarea id="answerOut" readonly></textarea><button class="btn sm" id="copyAns">Копировать</button></div>
+      <div>1. Вставьте код хоста:</div><textarea id="joinIn"></textarea><div class="btnrow"><button class="btn sm" id="pasteJoin">Вставить из буфера</button></div><button class="btn" id="netAnswer">Создать ответ</button>
+      <div id="answerBox" class="hidden"><div style="margin-top:10px">2. Отправьте этот ответ хосту:</div><textarea id="answerOut" readonly></textarea><div class="btnrow"><button class="btn sm" id="copyAns">Копировать</button><button class="btn sm" id="shareAns">Поделиться</button></div></div>
     </div>
     <div class="sub" id="netStatus" style="margin-top:10px"></div>
     <button class="btn hidden" id="netStart">Начать матч</button>
@@ -658,15 +662,23 @@ function collides(px,py,pz,hw,h){
   for(let y=y0;y<=y1;y++)for(let z=z0;z<=z1;z++)for(let x=x0;x<=x1;x++)if(World.get(x,y,z)!==0)return true;
   return false;
 }
+/* Автоподъём: если упёрлись в ступеньку высотой в 1 блок (и над ней свободно) - поднимаемся без прыжка */
+function stepUp(b,nx,nz){
+  if(!b.onGround||b.vy>1)return false;
+  const ty=Math.floor(b.y+.02)+1;
+  if(ty-b.y>1.001||collides(nx,ty+.001,nz,b.hw,b.h))return false;
+  if(b.isPlayer)b.stepOff=Math.min(1.2,(b.stepOff||0)+(ty-b.y));   // камера плавно догоняет, а не дёргается
+  b.y=ty;return true;
+}
 function moveBody(b,dt){
   b.hitX=b.hitZ=false;
   let nx=b.x+b.vx*dt;
-  if(collides(nx,b.y,b.z,b.hw,b.h)){
+  if(collides(nx,b.y,b.z,b.hw,b.h)&&!stepUp(b,nx,b.z)){
     nx=b.vx>0?Math.floor(nx+b.hw)-b.hw-.001:Math.floor(nx-b.hw)+1+b.hw+.001;b.vx=0;b.hitX=true;
   }
   b.x=nx;
   let nz=b.z+b.vz*dt;
-  if(collides(b.x,b.y,nz,b.hw,b.h)){
+  if(collides(b.x,b.y,nz,b.hw,b.h)&&!stepUp(b,b.x,nz)){
     nz=b.vz>0?Math.floor(nz+b.hw)-b.hw-.001:Math.floor(nz-b.hw)+1+b.hw+.001;b.vz=0;b.hitZ=true;
   }
   b.z=nz;
@@ -990,14 +1002,14 @@ const Pw={
   rate(w){return(w.rocket&&this.t.storm>0?.28:1)*(this.t.rapid>0?.45:1)*(G.ns&&w.zoom?.55:1);},
   tick(dt){for(const k in this.t)if(this.t[k]>0){this.t[k]-=dt;if(this.t[k]<=0){this.t[k]=0;this.ended(k);}}},
   ended(k){
-    if(k==='storm'){const sl=SLOTS[Player.sel];if(sl.t==='w'&&WDEF[sl.id].rocket&&Prog.level<WDEF[sl.id].unlock){Player.sel=0;Player.reloadT=0;Player.swapT=.3;UI.refreshSel();}}
+    if(k==='storm')Loadout.stormOff();
   },
   clear(){const st=this.t.storm>0;for(const k in this.t)this.t[k]=0;if(st)this.ended('storm');},
   apply(pu){
     const P=Player;if(pu.dur)this.t[pu.k]=pu.dur;
     switch(pu.k){
       case'ammo':for(let i=0;i<NW;i++)wstate[i].mag=WDEF[i].mag;P.reloadT=0;break;
-      case'storm':{const r=WDEF.findIndex(w=>w.rocket);wstate[r].mag=WDEF[r].mag;P.sel=r;P.reloadT=0;P.swapT=.3;UI.refreshSel();break;}
+      case'storm':{const r=WDEF.findIndex(w=>w.rocket);wstate[r].mag=WDEF[r].mag;P.reloadT=0;Loadout.stormOn();break;}
       case'heal':P.hp=Math.min(100,P.hp+50);break;
       case'tramp':P.pads=Math.min(8,P.pads+3);break;
       case'gren':P.gren=Math.min(8,P.gren+3);break;
@@ -1136,13 +1148,45 @@ function botGrenade(b,dt){
    Каждый клиент авторитетен за своего игрока: позицию, здоровье и смерть.
    Попадания пуль считает стрелок и шлёт урон жертве; взрывы симулируются у обоих.
    ===================================================================== */
-const RTC_CFG={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
-const b64=o=>btoa(JSON.stringify({t:o.type,s:o.sdp}));
-const unb64=c=>{const o=JSON.parse(atob(c.replace(/\s+/g,'')));return{type:o.t,sdp:o.s};};
+const RTC_CFG={iceServers:[
+  {urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun.cloudflare.com:3478']},
+  {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}   // публичный бесплатный ретранслятор: выручает за мобильным NAT
+]};
+/* Код подключения. Раньше это был base64 от всего SDP (3-5 КБ: мессенджеры его обрезали/делили на части, на телефоне получалось
+   «неверный код»). Теперь берём только нужное (логин/пароль ICE, отпечаток, кандидаты) - около 300-500 символов - и пересобираем SDP. */
+const b64u=t=>btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64u=t=>atob(t.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-t.length%4)%4));
+function sdpPack(d){
+  const L=d.sdp.split(/\r?\n/),g=pre=>{const l=L.find(x=>x.startsWith(pre));return l?l.slice(pre.length).trim():'';};
+  const fp=g('a=fingerprint:sha-256 ').replace(/:/g,''),role=({actpass:'a',active:'c',passive:'p'})[g('a=setup:')]||'a',cands=[];
+  for(const l of L){
+    if(!l.startsWith('a=candidate:'))continue;
+    const q=l.slice(12).split(' ');
+    if(q[2].toLowerCase()!=='udp'||q[6]!=='typ')continue;
+    cands.push(q[4]+'/'+q[5]+'/'+q[7][0]);
+  }
+  return 'VS1-'+b64u([g('a=ice-ufrag:'),g('a=ice-pwd:'),fp,role,cands.slice(0,10).join(',')].join('|'))+'.';   // точка в конце - признак конца кода (внутри мессенджер может переносить строки)
+}
+function sdpUnpack(text,type){
+  const t0=String(text),mm=t0.match(/VS1-([A-Za-z0-9_\s-]+)\./),m=mm?mm[1].replace(/\s+/g,''):((t0.match(/VS1-[A-Za-z0-9_-]+/)||[''])[0].slice(4));
+  if(m){
+    const [uf,pw,fp,role,cs]=unb64u(m).split('|');
+    if(!uf||!pw||!fp||fp.length!==64)throw new Error('bad');
+    const typ={h:'host',s:'srflx',p:'prflx',r:'relay'},prio={h:2130706431,s:1694498815,p:1845501695,r:16777215};
+    const lines=['v=0','o=- 4611731400430051336 2 IN IP4 127.0.0.1','s=-','t=0 0','a=group:BUNDLE 0','a=msid-semantic: WMS','m=application 9 UDP/DTLS/SCTP webrtc-datachannel','c=IN IP4 0.0.0.0',
+      'a=ice-ufrag:'+uf,'a=ice-pwd:'+pw,'a=ice-options:trickle','a=fingerprint:sha-256 '+fp.toUpperCase().match(/.{2}/g).join(':'),'a=setup:'+({a:'actpass',c:'active',p:'passive'})[role],'a=mid:0','a=sctp-port:5000','a=max-message-size:262144'];
+    (cs?cs.split(','):[]).forEach((c,i)=>{const [ip,port,t]=c.split('/');lines.push('a=candidate:'+(i+1)+' 1 udp '+(prio[t]-i*256)+' '+ip+' '+port+' typ '+typ[t]+(t==='h'?'':' raddr 0.0.0.0 rport 0'));});
+    lines.push('a=end-of-candidates');
+    return{type,sdp:lines.join('\r\n')+'\r\n'};
+  }
+  // старый формат (base64 от JSON) - на случай, если соперник на старой версии
+  const tok=(String(text).match(/[A-Za-z0-9+\/=]{60,}/g)||[]).sort((x,y)=>y.length-x.length)[0]||'';
+  const o=JSON.parse(atob(tok));return{type:o.t,sdp:o.s};
+}
 function waitIce(pc){
   return new Promise(res=>{
     if(pc.iceGatheringState==='complete')return res();
-    const to=setTimeout(res,6000);
+    const to=setTimeout(res,5000);
     pc.addEventListener('icegatheringstatechange',()=>{if(pc.iceGatheringState==='complete'){clearTimeout(to);res();}});
   });
 }
@@ -1183,18 +1227,18 @@ const NET={
     this.wire();this.bind(this.st);this.bind(this.ev);
     await pc.setLocalDescription(await pc.createOffer());
     await waitIce(pc);
-    return b64(pc.localDescription);
+    return sdpPack(pc.localDescription);
   },
-  async acceptAnswer(code){await this.pc.setRemoteDescription(unb64(code));this.status('Соединяемся…');},
+  async acceptAnswer(code){await this.pc.setRemoteDescription(sdpUnpack(code,'answer'));this.status('Соединяемся…');},
   async makeJoin(code){
     this.close();this.host=false;
     const pc=this.pc=new RTCPeerConnection(RTC_CFG);
     pc.ondatachannel=e=>{if(e.channel.label==='st')this.st=e.channel;else this.ev=e.channel;this.bind(e.channel);};
     this.wire();
-    await pc.setRemoteDescription(unb64(code));
+    await pc.setRemoteDescription(sdpUnpack(code,'offer'));
     await pc.setLocalDescription(await pc.createAnswer());
     await waitIce(pc);
-    return b64(pc.localDescription);
+    return sdpPack(pc.localDescription);
   },
   send(kind,obj){
     if(!this.on)return;
@@ -1369,6 +1413,7 @@ const Prog={
   save(){try{localStorage.setItem('voxelstrike_xp',String(this.xp));}catch(e){}},
   refreshMenu(){
     const nx=WDEF.find(w=>w.unlock>this.level);
+    Loadout.renderAll();
     $('lvlinfo').textContent='Уровень '+this.level+' · '+this.xp+' XP'+(nx?' · следующее оружие: '+nx.name+' (ур. '+nx.unlock+')':' · всё оружие открыто');
   },
   add(n,silent){
@@ -1394,13 +1439,14 @@ const Prog={
 const G={state:'menu',mode:'tdm',map:0,ns:false,team:0,score:[0,0],target:20,sens:1,rd:6,seed:1,ready:false};
 const keys={};
 const mouse={left:false,right:false,pressT:0,placeCD:0};
+const FEATURE={dash:false,pad:false,inspect:false};   // временно выключены: рывок, батут, осмотр оружия (включить - поставить true)
 // телефон: сенсорные элементы управления вместо клавиатуры/мыши (нет pointer lock - блокировку эмулируем)
 const TOUCH=(()=>{try{if(/[?&]touch=1/.test(location.search))return true;return navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches;}catch(e){return false;}})();
 const touchMove={x:0,y:0};let fakeLock=false;
 
 const WDEF=[
  {name:'Пистолет',dmg:22,interval:.2,auto:false,mag:12,reserve:60,spread:.010,pellets:1,recoil:.020,reload:1.2,snd:'pistol',range:90,unlock:1},
- {name:'Автомат',dmg:13,interval:.085,auto:true,mag:30,reserve:120,spread:.020,pellets:1,recoil:.011,reload:1.9,snd:'smg',range:90,unlock:2},
+ {name:'Автомат',dmg:13,interval:.085,auto:true,mag:30,reserve:120,spread:.020,pellets:1,recoil:.011,reload:1.9,snd:'smg',range:90,unlock:1},
  {name:'Дробовик',dmg:10,interval:.8,auto:false,mag:6,reserve:30,spread:.06,pellets:8,recoil:.07,reload:2.2,snd:'shotgun',range:40,unlock:3},
  {name:'Снайперка',dmg:105,interval:.95,auto:false,mag:5,reserve:20,spread:.02,zoomSpread:0,pellets:1,recoil:.05,reload:2.2,snd:'sniper',range:170,zoom:true,unlock:4},
  {name:'Штурмовая винтовка',dmg:19,interval:.095,auto:true,mag:30,reserve:150,spread:.012,pellets:1,recoil:.012,reload:2.0,snd:'rifle',range:110,unlock:5},
@@ -1412,17 +1458,73 @@ const KNIFE=WDEF.length-1;
 // ads: высота верхушки мушки над осью модели (при прицеливании она ставится ровно в центр экрана = точка выстрела), fov при прицеливании
 const ADS=[{y:.118,f:62},{y:.101,f:60},{y:.106,f:64},null,{y:.122,f:58},{y:.136,f:60},{y:.126,f:66},null];
 const NW=WDEF.length;
-const SLOTS=[];for(let i=0;i<NW;i++)SLOTS.push({t:'w',id:i});SLOTS.push({t:'b',id:0});
-const KEYLABELS=['1','2','3','4','5','6','7','8'];
-const SLOTKEYS={Digit1:0,Digit2:1,Digit3:2,Digit4:3,Digit5:4,Digit6:5,Digit7:6,Digit8:7};
+const SLOTS=[];
 let prevSel=0;
 const BLOCK_LIST=[STONE,BRICK,WOOD,GRASS,DIRT,SAND,GLASS,LEAVES];
 const wstate=WDEF.map(d=>({mag:d.mag,reserve:d.reserve}));
+/* Набор оружия: основное, запасное и нож. По умолчанию - автомат, пистолет, нож; остальное открывается с уровнем.
+   В режиме «ноу-скоп + крюки» доступна только снайперка. */
+const Loadout={
+  pick:[1,0],storm:false,
+  unlocked(id){return Prog.level>=WDEF[id].unlock;},
+  load(){
+    try{
+      const a=JSON.parse(localStorage.getItem('vs_loadout')||'null');
+      if(Array.isArray(a)&&a.length===2&&a.every(i=>Number.isInteger(i)&&i>=0&&i<NW&&i!==KNIFE&&this.unlocked(i))&&a[0]!==a[1])this.pick=a;
+    }catch(e){}
+  },
+  save(){try{localStorage.setItem('vs_loadout',JSON.stringify(this.pick));}catch(e){}},
+  ids(){return G.ns?[3]:[this.pick[0],this.pick[1],KNIFE];},
+  rebuild(){
+    const cur=SLOTS.length?SLOTS[Player.sel]:null,wasBlock=!!cur&&cur.t==='b',curId=cur&&cur.t==='w'?cur.id:-1;
+    const ids=this.ids(),rk=WDEF.findIndex(w=>w.rocket);
+    SLOTS.length=0;ids.forEach(id=>SLOTS.push({t:'w',id}));
+    if(this.storm&&!ids.includes(rk))SLOTS.push({t:'w',id:rk,temp:true});
+    SLOTS.push({t:'b',id:0});
+    if(wasBlock)Player.sel=SLOTS.length-1;
+    else{const i=SLOTS.findIndex(x=>x.t==='w'&&x.id===curId);if(i<0)Player.swapT=.3;Player.sel=i>=0?i:0;}
+    prevSel=clamp(prevSel,0,Math.max(0,SLOTS.length-2));
+    if(UI.built){UI.buildHotbar();Player.reloadT=0;}
+  },
+  set(k,id){
+    const o=1-k,old=this.pick[k];
+    if(this.pick[o]===id)this.pick[o]=old;   // то же оружие во втором слоте - меняем местами
+    this.pick[k]=id;this.save();this.rebuild();this.renderAll();
+  },
+  stormOn(){
+    const rk=WDEF.findIndex(w=>w.rocket);this.storm=true;this.rebuild();
+    const i=SLOTS.findIndex(x=>x.t==='w'&&x.id===rk);if(i>=0){Player.sel=i;Player.swapT=.3;UI.refreshSel();}
+  },
+  stormOff(){
+    const rk=WDEF.findIndex(w=>w.rocket),cur=SLOTS[Player.sel];
+    this.storm=false;const was=cur&&cur.t==='w'&&cur.id===rk;this.rebuild();
+    if(was&&!this.ids().includes(rk)){Player.sel=0;Player.swapT=.3;UI.refreshSel();}
+  },
+  render(el){
+    if(!el)return;el.innerHTML='';
+    const row=(label,k)=>{
+      const r=document.createElement('div');r.className='r2';const l=document.createElement('label');l.textContent=label;r.appendChild(l);
+      const sel=document.createElement('select');
+      for(let id=0;id<NW;id++){
+        if(id===KNIFE)continue;
+        const o=document.createElement('option'),lock=!this.unlocked(id);
+        o.value=id;o.textContent=WDEF[id].name+(lock?' — с ур. '+WDEF[id].unlock:'');o.disabled=lock;sel.appendChild(o);
+      }
+      sel.value=this.pick[k];sel.onchange=()=>this.set(k,+sel.value);
+      // выпадающий список на телефоне не должен запускать выстрелы/обзор
+      sel.addEventListener('pointerdown',e=>e.stopPropagation());
+      r.appendChild(sel);el.appendChild(r);
+    };
+    row('Основное',0);row('Запасное',1);
+    const r=document.createElement('div');r.className='r2';r.innerHTML='<label>Холодное</label><div class="fixed">Нож</div>';el.appendChild(r);
+  },
+  renderAll(){this.render($('loMenu'));this.render($('loPause'));}
+};
 
 const Player={
   isPlayer:true,name:'Вы',team:0,col:0,hp:100,alive:true,respawnT:0,
   x:0,y:0,z:0,px:0,py:0,pz:0,vx:0,vy:0,vz:0,hw:.3,h:1.8,onGround:false,hitX:false,hitZ:false,
-  yaw:0,pitch:0,recoil:0,sel:0,block:STONE,cd:0,reloadT:0,kick:0,bloom:0,swapT:0,flashT:0,zoom:0,ads:0,inspT:0,shotN:0,shotT:0,recoilYaw:0,
+  yaw:0,pitch:0,recoil:0,sel:0,block:STONE,cd:0,reloadT:0,kick:0,bloom:0,swapT:0,flashT:0,zoom:0,ads:0,inspT:0,stepOff:0,shotN:0,shotT:0,recoilYaw:0,
   stepD:0,dmgFlash:0,hitT:0,bobT:0,tgt:{hit:false,x:0,y:0,z:0,nx:0,ny:0,nz:0},brkX:0,brkY:0,brkZ:0,brk:0,killer:'',killerRef:null,rage:0,kills:0,deaths:0,slideT:0,sdx:0,sdz:0,sv:0,dashT:0,dashCD:0,ddx:0,ddz:0,wantSlide:false,wantDash:false,eyeH:1.62,gren:3,pads:2,gCD:0,gas:100,odmT:0
 };
 const Bots=[];
@@ -1511,13 +1613,14 @@ const UI={
   msgT:0,
   msg(t,dur){$('msg').textContent=t;this.msgT=dur===undefined?1.5:dur;},
   buildHotbar(){
+    this.built=true;
     const hb=$('hotbar');hb.innerHTML='';
     SLOTS.forEach((sl1,i)=>{
       if(sl1.t==='b')return;
       const d=document.createElement('div');d.className='slot';
       const cv=document.createElement('canvas');cv.width=cv.height=40;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
       sl1.cv=cv;sl1.g=g;
-      const k=document.createElement('span');k.textContent=KEYLABELS[i];
+      const k=document.createElement('span');k.textContent=String(i+1);
       d.appendChild(cv);d.appendChild(k);
       if(sl1.t==='w'){const l=document.createElement('em');l.className='lk';d.appendChild(l);sl1.lk=l;}
       hb.appendChild(d);sl1.el=d;
@@ -1577,7 +1680,7 @@ const UI={
     $('gas').classList.toggle('hidden',!G.ns);if(G.ns){const gw=Math.round(P.gas)+'%';if(this.cache.gas!==gw){this.cache.gas=gw;$('gasb').style.width=gw;}}
     let ph='';for(const pu of PU)if(pu.dur&&Pw.t[pu.k]>0)ph+='<div class="pu" style="border-color:'+pu.css+'">'+pu.name+'<b>'+Math.ceil(Pw.t[pu.k])+'</b></div>';
     if(this.cache.pu!==ph){this.cache.pu=ph;$('pups').innerHTML=ph;}
-    this.set('inv','Граната [G] '+P.gren+'  ·  Батут [E] '+P.pads+'  ·  Подкат [C]  ·  Рывок [F] '+(P.dashCD>0?(Math.ceil(P.dashCD*10)/10).toFixed(1)+'с':'готов'));
+    this.set('inv','Граната [G] '+P.gren+'  ·  Подкат [C]');
     this.set('tgCnt',String(P.gren));this.set('tpCnt',String(P.pads));
     this.set('streak',(Reward.streak>=2?'Серия x'+Reward.streak:'')+(P.rage>0?'  ЯРОСТЬ '+Math.ceil(P.rage)+'с':''));
     const need=Prog.need(Prog.level),cur=Prog.xp-Prog.cum(Prog.level);
@@ -1699,12 +1802,31 @@ const Soldier={
     const mixer=new THREE.AnimationMixer(root),acts={};
     for(const c of this.gltf.animations){const a=mixer.clipAction(c);a.setLoop(c.name==='die'?THREE.LoopOnce:THREE.LoopRepeat);if(c.name==='die')a.clampWhenFinished=true;acts[c.name]=a;}
     acts.idle.play();
-    g.userData={soldier:true,body,mixer,acts,cur:acts.idle,curName:'idle',flash,spine:root.getObjectByName('Spine'),chest:root.getObjectByName('Chest'),head:root.getObjectByName('Head'),pit:0,rec:0};
+    let outline=null;
+    if(body){   // красноватый контур для врагов: тот же скелет, перевёрнутые грани, раздутые вдоль нормали
+      outline=new THREE.SkinnedMesh(body.geometry,this.outlineMat());outline.bind(body.skeleton,body.bindMatrix);
+      outline.frustumCulled=false;outline.visible=false;body.parent.add(outline);
+    }
+    g.userData={soldier:true,body,outline,mixer,acts,cur:acts.idle,curName:'idle',flash,spine:root.getObjectByName('Spine'),chest:root.getObjectByName('Chest'),head:root.getObjectByName('Head'),pit:0,rec:0};
     return g;
+  },
+  outlineMat(){
+    if(this._om)return this._om;
+    const m=new THREE.MeshBasicMaterial({color:0xff3a2e,side:THREE.BackSide,polygonOffset:true,polygonOffsetFactor:6,polygonOffsetUnits:6});m.skinning=true;   // сдвиг по глубине: наружу торчит только кромка, а не пятна поверх тела
+    m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <skinning_vertex>',
+      ['#include <skinning_vertex>','#ifdef USE_SKINNING',
+       'mat4 skm_=skinWeight.x*boneMatX+skinWeight.y*boneMatY+skinWeight.z*boneMatZ+skinWeight.w*boneMatW;',
+       'vec3 on_=normalize((bindMatrixInverse*skm_*bindMatrix*vec4(normal,0.0)).xyz);',
+       'float od_=-(modelViewMatrix*vec4(transformed,1.0)).z;',
+       'transformed+=on_*min(.12,.02+.0026*od_);','#endif'].join('\n'));};
+    m.customProgramCacheKey=()=>'vsoutline';
+    return this._om=m;
   },
   tint(e){
     const u=e.group.userData;if(!u.soldier)return;
-    u.body.material.color.setHex(0xffffff).lerp(new THREE.Color(PAL[e.col].hex),.5);
+    const enemy=e.team!==Player.team;   // враги чуть красноватые и с контуром, свои - цвета команды
+    u.body.material.color.setHex(0xffffff).lerp(new THREE.Color(enemy?0xff6a58:0x7fd0ff),enemy?.22:.28);   // свои - холодный оттенок, враги - тёплый красноватый
+    if(u.outline)u.outline.visible=enemy;
   },
   anim(b,dt){
     const u=b.group.userData,sp=Math.hypot(b.vx,b.vz),aim=b.vis?'aim_':'';
@@ -2067,7 +2189,7 @@ function selectSlot(i){
   Player.sel=i;Player.reloadT=0;Player.swapT=.3;Player.zoom=0;Player.ads=0;Player.inspT=0;if(TOUCH){mouse.right=false;const ta=$('tAim');if(ta)ta.classList.remove('tog');}UI.refreshSel();
 }
 function toggleBuild(){
-  if(SLOTS[Player.sel].t==='b')selectSlot(prevSel);else selectSlot(NW);
+  if(SLOTS[Player.sel].t==='b')selectSlot(prevSel);else selectSlot(SLOTS.length-1);
 }
 function cycleSlot(dir){
   const n=SLOTS.length;let i=Player.sel;
@@ -2090,6 +2212,7 @@ function finishReload(){
 const INSPECT_T=2.8;
 let knifeSide=1;
 function inspect(){
+  if(!FEATURE.inspect)return;
   const P=Player,wi=curWeapon();
   if(wi<0||!P.alive||P.inspT>0||P.reloadT>0||P.zoom>.1||P.ads>.1||P.cd>0||P.swapT>0)return;
   P.inspT=INSPECT_T;
@@ -2163,6 +2286,25 @@ const Highlight={mesh:null,crack:null,crackTex:null,init(){
   this.crack.visible=false;scene.add(this.crack);
 }};
 
+/* Лёгкий автоприцел (только телефон): при стрельбе или прицеливании прицел мягко подтягивается к ближайшему видимому врагу
+   в узком конусе, а обзор рядом с целью чуть замедляется. Подтяжка слабая - игроку всё равно надо целиться самому. */
+function aimAssist(dt){
+  const P=Player,ex=P.x,ey=P.y+P.eyeH,ez=P.z,ya=P.yaw+P.recoilYaw,pa=P.pitch+P.recoil,CONE=.07;
+  let best=null,be=CONE;
+  for(const e of ENT){
+    if(!e.alive||e.team===P.team)continue;
+    const dx=e.x-ex,dy=e.y+1.15-ey,dz=e.z-ez,d=Math.hypot(dx,dy,dz);
+    if(d>70||d<2)continue;
+    const eyw=wrapAng(Math.atan2(-dx,-dz)-ya),ep=Math.asin(dy/d)-pa,err=Math.hypot(eyw,ep*1.3);
+    if(err>=be)continue;
+    if(raycast(ex,ey,ez,dx/d,dy/d,dz/d,d)&&RC.t<d-.6)continue;   // за стеной - не помогаем
+    be=err;best={y:eyw,p:ep};
+  }
+  if(!best){AA.slow=1;return;}
+  const k=Math.min(1,dt*1.1*(1-be/CONE*.6));
+  P.yaw+=best.y*k;P.pitch=clamp(P.pitch+best.p*k*.8,-1.55,1.55);
+  AA.slow=be<CONE*.6?.65:1;
+}
 function overlapsEntity(bx0,by0,bz0){
   for(const e of ENT){
     if(!e.alive)continue;
@@ -2179,7 +2321,7 @@ function updatePlayer(dt){
     return;
   }
   if(P.y<-10)spawnEntity(P);
-  P.px=P.x;P.py=P.y;P.pz=P.z;
+  P.px=P.x;P.py=P.y;P.pz=P.z;P.stepOff*=Math.exp(-dt*12);
   const wi=curWeapon();
   // зум снайперки
   const wantZoom=!G.ns&&wi>=0&&WDEF[wi].zoom&&mouse.right&&P.reloadT<=0&&P.swapT<=0;
@@ -2204,7 +2346,7 @@ function updatePlayer(dt){
     }
   }
   // рывок (F): мгновенный бросок в сторону движения
-  if(P.wantDash){P.wantDash=false;
+  if(P.wantDash){P.wantDash=false;if(!FEATURE.dash)P.dashCD=1e9;
     if(P.dashCD<=0&&P.dashT<=0){
       P.ddx=wl>0?wx/wl:-sy;P.ddz=wl>0?wz/wl:-cy;P.dashT=.2;P.dashCD=Pw.on('speed')?1.0:1.8;P.slideT=0;
       Sfx.play('dash',1);Fx.fov=Math.max(Fx.fov,9);
@@ -2247,6 +2389,7 @@ function updatePlayer(dt){
   if(slot.t==='w'){
     // стрельба
     const w=WDEF[slot.id],st=wstate[slot.id];
+    if(TOUCH&&!w.melee&&(mouse.left||P.ads>.4||P.zoom>.4))aimAssist(dt);else AA.slow=1;
     const want=(w.auto||Pw.on('rapid')||(w.rocket&&Pw.on('storm')))?mouse.left:(mouse.pressT>0);
     if(want&&P.cd<=0&&P.reloadT<=0&&P.swapT<.12){
       if(st.mag>0){playerShoot(slot.id);mouse.pressT=0;}
@@ -2485,7 +2628,7 @@ function renderFrame(dt,alpha){
   if(moving)vmBob+=dt*hs*1.9;
   let by=moving?Math.sin(vmBob*2)*.03*Math.min(1,hs/5):0;
   if(!P.alive){camera.position.set(P.x,P.y+.35,P.z);camera.rotation.set(-.3,P.yaw,.9,'YXZ');}
-  else{camera.position.set(ex,ey+P.eyeH+by,ez);const sk=Fx.shake*Math.min(1,camera.fov/60);camera.rotation.set(P.pitch+P.recoil+(Math.random()-.5)*sk*.08,P.yaw+P.recoilYaw+(Math.random()-.5)*sk*.08,(Math.random()-.5)*sk*.06,'YXZ');}
+  else{camera.position.set(ex,ey+P.eyeH+by-P.stepOff,ez);const sk=Fx.shake*Math.min(1,camera.fov/60);camera.rotation.set(P.pitch+P.recoil+(Math.random()-.5)*sk*.08,P.yaw+P.recoilYaw+(Math.random()-.5)*sk*.08,(Math.random()-.5)*sk*.06,'YXZ');}
   const wi=curWeapon(),sprint=(keys.ShiftLeft||keys.ShiftRight)&&moving&&keys.KeyW;
   const tf=((wi>=0&&WDEF[wi].zoom)?lerp(75,18,P.zoom):lerp(sprint?82:75,wi>=0&&ADS[wi]?ADS[wi].f:75,P.ads))+Fx.fov;
   if(Math.abs(camera.fov-tf)>.05){camera.fov=lerp(camera.fov,tf,Math.min(1,dt*24));camera.updateProjectionMatrix();}
@@ -2581,7 +2724,7 @@ async function startGame(){
   ENT=G.mode==='duel'?[Player,Remote]:[Player,...Bots];Player.alive=false;
   for(const i of[Player,...Bots])spawnEntity(i);
   Player.yaw=Math.random()*6.28;Player.pitch=0;Player.recoil=0;Player.recoilYaw=0;Player.ads=0;Player.inspT=0;Player.shotN=0;Player.sel=0;Player.reloadT=0;Player.cd=0;Player.swapT=.3;Player.zoom=0;Player.dmgFlash=0;
-  Hooks.clear();if(G.ns)Player.sel=3;
+  Hooks.clear();Loadout.storm=false;Loadout.rebuild();Player.sel=0;prevSel=0;
   if(VMTeam)VMTeam.color.setHex(PAL[Player.col].hex);
   if(G.mode==='duel'){
     const sp=duelSpawns(G.seed),mine=sp[NET.host?0:1],th=sp[NET.host?1:0];
@@ -2610,6 +2753,7 @@ function setLocked(locked){
   }else if(G.state==='playing'){
     G.state='paused';mouse.left=mouse.right=false;if(NET.on)for(const k in keys)keys[k]=false;
     $('sens2').value=G.sens;$('sens2V').textContent=G.sens.toFixed(1);$('rd2').value=G.rd;$('rd2V').textContent=G.rd;
+    $('loPauseBox').classList.toggle('hidden',!!G.ns);Loadout.render($('loPause'));
     $('pause').classList.remove('hidden');
     if(TOUCH)Touch.reset();
   }
@@ -2644,11 +2788,11 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='ShiftLeft'||e.code==='Tab')e.preventDefault();
   if(e.code==='KeyR')startReload();
   if(e.code==='KeyZ'&&!e.repeat)Hooks.fire(1);
-  if(!e.repeat){if(e.code==='KeyC')Player.wantSlide=true;if(e.code==='KeyF')Player.wantDash=true;if(e.code==='KeyG')throwGrenade();if(e.code==='KeyE')placePad();}
+  if(!e.repeat){if(e.code==='KeyC')Player.wantSlide=true;if(e.code==='KeyF'&&FEATURE.dash)Player.wantDash=true;if(e.code==='KeyG')throwGrenade();if(e.code==='KeyE'&&FEATURE.pad)placePad();}
   if(e.code==='KeyB'&&!e.repeat)toggleBuild();
   else if(e.code.startsWith('Digit')&&SLOTS[Player.sel].t==='b'){const n=+e.code.slice(5)-1;if(n>=0&&n<BLOCK_LIST.length){Player.block=BLOCK_LIST[n];UI.refreshSel();}}
-  else if(SLOTKEYS[e.code]!==undefined)selectSlot(SLOTKEYS[e.code]);
-  if(e.code==='KeyV'&&!e.repeat)inspect();
+  else if(e.code.startsWith('Digit')){const n=+e.code.slice(5)-1;if(n>=0&&n<SLOTS.length-1)selectSlot(n);}
+  if(e.code==='KeyV'&&!e.repeat&&FEATURE.inspect)inspect();
   if(e.code==='KeyQ'){if(SLOTS[Player.sel].t==='b')cycleBlock(1);else if(prevSel!==Player.sel)selectSlot(prevSel);}
 });
 document.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyZ')Hooks.release(1);});
@@ -2664,6 +2808,7 @@ function enterFullscreen(){
     if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});
   }catch(e){}
 }
+const AA={slow:1};
 const Touch={
   jid:null,jx:0,jy:0,lid:null,lx:0,ly:0,
   radius(){return Math.min(66,Math.max(42,Math.min(innerWidth,innerHeight)*.14));},
@@ -2679,7 +2824,7 @@ const Touch={
   },
   look(dx,dy){
     if(G.state!=='playing')return;const P=Player;if(!P.alive)return;
-    const k=.0022*G.sens*2.3*Math.max(.42,Math.pow(camera.fov/75,.7));
+    const k=.0022*G.sens*2.3*AA.slow*Math.max(.42,Math.pow(camera.fov/75,.7));
     P.yaw-=dx*k;P.pitch=clamp(P.pitch-dy*k,-1.55,1.55);
   },
   reset(){
@@ -2722,6 +2867,7 @@ const Touch={
     // кнопки
     const aim=$('tAim');
     this.bind('tFire',()=>{mouse.left=true;mouse.pressT=.15;},()=>{mouse.left=false;},true);
+    this.bind('tFire2',()=>{mouse.left=true;mouse.pressT=.15;},()=>{mouse.left=false;});   // огонь указательным пальцем слева сверху: играть можно тремя пальцами
     this.bind('tAim',()=>{
       if(G.ns||SLOTS[Player.sel].t==='b'){mouse.right=true;Hooks.fire(0);aim.classList.add('hold');}   // крюк / поставить блок: пока держите
       else{mouse.right=!mouse.right;aim.classList.toggle('tog',mouse.right);}                           // прицел: нажать - включить, ещё раз - выключить
@@ -2752,17 +2898,17 @@ if(TOUCH){
   window.addEventListener('resize',checkOrient);window.addEventListener('orientationchange',checkOrient);checkOrient();
   G.rd=4;$('rd').value=4;$('rdV').textContent=4;$('rd2').value=4;$('rd2V').textContent=4;
 }
-if(/[?&]debug=1/.test(location.search))window.__vs={G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,get TOUCH(){return TOUCH;}};
+if(/[?&]debug=1/.test(location.search))window.__vs={G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
 
 // меню
 for(let i=0;i<4;i++)$('map'+i).onclick=()=>{G.map=i;for(let j=0;j<4;j++)$('map'+j).classList.toggle('on',j===i);};
-function setMode(m,ns){
-  G.mode=m;G.ns=!!ns;
-  $('modeT').classList.toggle('on',m==='tdm');$('modeF').classList.toggle('on',m==='ffa'&&!ns);$('modeN').classList.toggle('on',m==='duel'&&!ns);$('modeS').classList.toggle('on',m==='ffa'&&!!ns);$('modeD').classList.toggle('on',m==='duel'&&!!ns);
+function setMode(m){
+  G.mode=m;G.ns=false;
+  $('modeT').classList.toggle('on',m==='tdm');$('modeF').classList.toggle('on',m==='ffa');$('modeN').classList.toggle('on',m==='duel');
   $('teamPick').classList.toggle('hidden',m!=='tdm');
   $('play').textContent=m==='duel'?'Играть по сети':'Играть';
 }
-$('modeT').onclick=()=>setMode('tdm');$('modeF').onclick=()=>setMode('ffa');$('modeN').onclick=()=>setMode('duel');$('modeS').onclick=()=>setMode('ffa',true);$('modeD').onclick=()=>setMode('duel',true);
+$('modeT').onclick=()=>setMode('tdm');$('modeF').onclick=()=>setMode('ffa');$('modeN').onclick=()=>setMode('duel');
 $('teamR').onclick=()=>{G.team=0;$('teamR').classList.add('on');$('teamB').classList.remove('on');};
 $('teamB').onclick=()=>{G.team=1;$('teamB').classList.add('on');$('teamR').classList.remove('on');};
 $('sens').oninput=e=>{G.sens=parseFloat(e.target.value);$('sensV').textContent=G.sens.toFixed(1);};
@@ -2775,19 +2921,37 @@ $('play').onclick=()=>{
   if(G.mode==='duel'){NET.close();$('menu').classList.add('hidden');$('net').classList.remove('hidden');$('netChoose').classList.remove('hidden');$('netHostBox').classList.add('hidden');$('netJoinBox').classList.add('hidden');$('answerBox').classList.add('hidden');$('netStart').classList.add('hidden');$('netStatus').textContent='';return;}
   requestLock();startGame();
 };
-$('netHost').onclick=async()=>{
-  $('netChoose').classList.add('hidden');$('netHostBox').classList.remove('hidden');$('codeOut').value='Генерация кода…';
-  try{$('codeOut').value=await NET.makeHost();NET.status('Отправьте код сопернику и вставьте его ответ ниже.');}catch(e){$('codeOut').value='';NET.status('Ошибка: '+e.message);}
+const hostWith=async ns=>{
+  G.ns=ns;$('netChoose').classList.add('hidden');$('netHostBox').classList.remove('hidden');$('codeOut').value='Генерация кода…';
+  try{$('codeOut').value=await NET.makeHost();NET.status('Режим: '+(ns?'ноу-скоп + крюки':'стандарт')+'. Отправьте код сопернику и вставьте его ответ ниже.');}catch(e){$('codeOut').value='';NET.status('Ошибка: '+e.message);}
 };
-$('netJoin').onclick=()=>{$('netChoose').classList.add('hidden');$('netJoinBox').classList.remove('hidden');};
-$('netConnect').onclick=async()=>{try{await NET.acceptAnswer($('codeIn').value);}catch(e){NET.status('Неверный ответный код');}};
+$('netHostStd').onclick=()=>hostWith(false);$('netHostNs').onclick=()=>hostWith(true);
+$('netJoin').onclick=()=>{$('netChoose').classList.add('hidden');$('netJoinBox').classList.remove('hidden');NET.status('Режим игры задаёт хост.');};
+const codeErr='Код не распознан. Скопируйте его целиком, без лишних слов и пробелов (в мессенджере он мог обрезаться), и попробуйте снова.';
+$('netConnect').onclick=async()=>{try{await NET.acceptAnswer($('codeIn').value);}catch(e){NET.status(codeErr);}};
 $('netAnswer').onclick=async()=>{
   $('answerBox').classList.remove('hidden');$('answerOut').value='Генерация ответа…';
-  try{$('answerOut').value=await NET.makeJoin($('joinIn').value);NET.status('Отправьте ответ хосту и ждите соединения.');}catch(e){$('answerOut').value='';NET.status('Неверный код хоста');}
+  try{$('answerOut').value=await NET.makeJoin($('joinIn').value);NET.status('Отправьте этот ответ хосту и ждите соединения.');}catch(e){$('answerOut').value='';$('answerBox').classList.add('hidden');NET.status(codeErr);}
 };
+async function copyText(id,btn){
+  const el=$(id),t=el.value;let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true;}catch(e){}
+  if(!ok){try{el.focus();el.select();el.setSelectionRange(0,t.length);ok=document.execCommand('copy');}catch(e){}}
+  btn.textContent=ok?'Скопировано':'Выделите и скопируйте вручную';setTimeout(()=>btn.textContent='Копировать',1800);
+}
+async function shareText(id){
+  const t=$(id).value;
+  try{if(navigator.share){await navigator.share({title:'Voxel Strike',text:t});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  try{await navigator.clipboard.writeText(t);NET.status('Код скопирован - вставьте его в мессенджер.');}catch(e){NET.status('Выделите код в поле и скопируйте вручную.');}
+}
+async function pasteInto(id){
+  try{$(id).value=await navigator.clipboard.readText();}catch(e){NET.status('Браузер не дал прочитать буфер - вставьте код в поле вручную (долгое нажатие).');}
+}
 $('copyOut').onclick=e=>copyText('codeOut',e.target);$('copyAns').onclick=e=>copyText('answerOut',e.target);
+$('shareOut').onclick=()=>shareText('codeOut');$('shareAns').onclick=()=>shareText('answerOut');
+$('pasteIn').onclick=()=>pasteInto('codeIn');$('pasteJoin').onclick=()=>pasteInto('joinIn');
 $('netStart').onclick=()=>NET.startMatch();
-$('netBack').onclick=()=>{NET.close();$('net').classList.add('hidden');$('menu').classList.remove('hidden');};
+$('netBack').onclick=()=>{G.ns=false;NET.close();$('net').classList.add('hidden');$('menu').classList.remove('hidden');};
 $('restart').onclick=()=>{
   Sfx.init();
   if(G.mode==='duel'){
@@ -2813,7 +2977,7 @@ if(typeof THREE==='undefined'){
   window.addEventListener('appinstalled',()=>$('installBox').classList.add('hidden'));
   const standalone=matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)$('iosHint').classList.remove('hidden');
-  const boot=()=>{initThree();UI.buildHotbar();Prog.refreshMenu();};Soldier.load().then(boot,boot);
+  const boot=()=>{Loadout.load();Loadout.rebuild();initThree();UI.buildHotbar();Prog.refreshMenu();};Soldier.load().then(boot,boot);
   G.ready=false;requestAnimationFrame(frame);
 }
 })();
