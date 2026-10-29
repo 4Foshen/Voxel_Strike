@@ -7,7 +7,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#101418">
-<link rel="icon" href="data:,">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Voxel Strike">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#101418;font-family:"Trebuchet MS","Segoe UI",Tahoma,sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
@@ -216,6 +220,8 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
     <h1>VOXEL STRIKE</h1>
     <div class="sub">Командный бой в блочном мире. Первые до 20 убийств.</div>
     <div class="sub" id="lvlinfo" style="color:#ffe36b;opacity:1"></div>
+    <div id="installBox" class="hidden"><button class="btn sm" id="installBtn" style="background:#2b62c4">Установить как приложение (без панелей браузера)</button></div>
+    <div id="iosHint" class="sub hidden" style="color:#ffe36b;opacity:1">На iPhone: «Поделиться» → «На экран „Домой“» — игра откроется на весь экран.</div>
     <div>Карта</div>
     <div class="maps"><button class="on" id="map0">Холмы</button><button id="map1">Пустыня</button><button id="map2">Арена</button><button id="map3">Горы</button></div>
     <div>Режим</div>
@@ -2799,6 +2805,14 @@ if(typeof THREE==='undefined'){
   $('play').disabled=true;
 }else{
   Prog.load();
+  // PWA: офлайн-кэш и установка как приложения
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  let installEv=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEv=e;$('installBox').classList.remove('hidden');});
+  $('installBtn').onclick=async()=>{if(!installEv)return;installEv.prompt();try{await installEv.userChoice;}catch(_){}installEv=null;$('installBox').classList.add('hidden');};
+  window.addEventListener('appinstalled',()=>$('installBox').classList.add('hidden'));
+  const standalone=matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)$('iosHint').classList.remove('hidden');
   const boot=()=>{initThree();UI.buildHotbar();Prog.refreshMenu();};Soldier.load().then(boot,boot);
   G.ready=false;requestAnimationFrame(frame);
 }
