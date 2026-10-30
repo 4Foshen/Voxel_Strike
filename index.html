@@ -773,7 +773,7 @@ function stepUp(b,nx,nz){
   const ty=Math.floor(b.y+.02)+1;
   if(ty-b.y>1.001||collides(nx,ty+.001,nz,b.hw,b.h))return false;
   if(b.isPlayer){   // камера плавно догоняет, а не дёргается
-    b.stepOff=Math.min(1.2,(b.stepOff||0)+(ty-b.y));
+    b.stepOff=Math.min(.7,(b.stepOff||0)+(ty-b.y));
     b.py+=ty-b.y;   // интерполяция кадра уже стартует с новой высоты, иначе подъём учитывается дважды и камера уходит в блок
   }
   b.y=ty;return true;
@@ -2536,7 +2536,7 @@ function updatePlayer(dt){
     return;
   }
   if(P.y<-10)spawnEntity(P);
-  P.px=P.x;P.py=P.y;P.pz=P.z;P.stepOff*=Math.exp(-dt*12);
+  P.px=P.x;P.py=P.y;P.pz=P.z;P.stepOff*=Math.exp(-dt*22);
   const wi=curWeapon();
   // зум снайперки
   const wantZoom=!G.ns&&wi>=0&&WDEF[wi].zoom&&mouse.right&&P.reloadT<=0&&P.swapT<=0;
@@ -3233,7 +3233,7 @@ if(TOUCH){
   window.addEventListener('resize',checkOrient);window.addEventListener('orientationchange',checkOrient);checkOrient();
   G.rd=4;$('rd').value=4;$('rdV').textContent=4;$('rd2').value=4;$('rd2V').textContent=4;
 }
-if(/[?&]debug=1/.test(location.search))window.__vs={G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
+if(/[?&]debug=1/.test(location.search))window.__vs={get camera(){return camera;},G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
 
 // страницы главного меню: основная, режим/карта, настройки, кастомизация
 function mmPage(p){
