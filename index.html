@@ -2339,7 +2339,7 @@ function buildViewmodels(){
       const R=pist(0),L=pist(-.3);
       return{mz:[0,.05,-.27],mov:R.sl,mov2:L.sl,mt:'slide',amt:.07,mag:R.mg,mag2:L.mg,pg:[R.pg,L.pg],rt:'dual',amp:.2,ox:-.09,mzx:[0,-.3],rh:[0,-.07,.04],lh:[-.3,-.07,.04]};},
     // 10 — нож: рукоять в кулаке стоит вертикально, лезвие уходит вверх-вперёд
-    g=>{const kn=new THREE.Group();kn.position.set(0,0,0);kn.rotation.set(-.95,.5,.12);kn.scale.setScalar(1.6);g.add(kn);
+    g=>{const kn=new THREE.Group();kn.position.set(0,-.07,.04);kn.rotation.set(-.6,.75,0);kn.scale.setScalar(1.3);g.add(kn);
       const K=(w,h,d,c,x,y,z,rx)=>{const m=bx(w,h,d,c,x,y,z);if(rx)m.rotation.x=rx;kn.add(m);return m;};
       for(let i=0;i<5;i++)K(.04,.022,.04,i%2?0x2e2118:0x3d2e20,0,-.05+i*.022,0);     // обмотка рукояти
       K(.044,.018,.044,0x9aa3ad,0,-.075,0);K(.036,.01,.036,DK,0,-.086,0);               // навершие
@@ -2347,7 +2347,7 @@ function buildViewmodels(){
       K(.012,.2,.044,0xd5dbe2,0,.18,.0);K(.008,.2,.012,0xf1f4f7,0,.18,-.026);           // лезвие и режущая кромка
       K(.012,.05,.036,0xd5dbe2,0,.31,-.004,-.35);K(.01,.03,.02,0xe6eaee,0,.345,-.014,-.7); // остриё
       K(.006,.17,.014,0x9ba4ae,0,.17,.03);                                              // обух
-      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.01,.0],lh:[-.6,-.6,.3],vo:[-.08,.1,-.02]};}
+      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.07,.04],lh:[-.6,-.6,.3],vo:[-.04,.1,-.02]};}
   ];
   const fm=new THREE.MeshBasicMaterial({color:0xffe38a,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false});
   for(let i=0;i<NW;i++){
