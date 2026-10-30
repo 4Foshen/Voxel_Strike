@@ -121,6 +121,15 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block}
 .slot.lock canvas{opacity:.25}
 .slot em.lk{position:absolute;bottom:0;left:0;right:0;font:700 9px sans-serif;text-align:center;background:rgba(0,0,0,.75);color:#ffb52e;font-style:normal}
 
+.pbox{display:flex;gap:clamp(10px,2.4vw,26px);width:min(940px,95vw);max-height:94vh;overflow:auto;padding:clamp(12px,3vh,28px) clamp(12px,2.4vw,28px);background:rgba(10,14,20,.9);border-top:4px solid #ffd23f;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.pcol{min-width:0}.pL{flex:0 0 min(300px,38%)}.pR{flex:1}
+.ptitle{font-size:clamp(24px,5.4vh,40px);font-weight:900;letter-spacing:6px;margin-bottom:6px;text-shadow:3px 3px 0 #b9382c,6px 6px 0 #2b62c4}
+.pbox .mh{margin:clamp(8px,1.8vh,14px) 0 4px;font-weight:800;letter-spacing:2px;font-size:clamp(10px,1.8vh,13px);opacity:.7;text-transform:uppercase}
+.pbox .row{flex-wrap:wrap;gap:2px 10px;margin:6px 0;font-size:clamp(12px,2vh,15px)}.pbox .row label{width:100%}
+.mbtn.danger{background:rgba(120,38,30,.85);border-left-color:#ff8a7a}.mbtn.danger:hover{background:rgba(160,50,40,.95)}
+.pslots{display:flex;gap:8px;margin-bottom:8px}.pslots .cslot{flex:1;min-width:0;padding:clamp(5px,1.2vh,9px) 10px}.pslots .cslot .cn{font-size:clamp(11px,2.2vh,16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:34px}
+.pslots .cslot canvas{width:clamp(28px,6vh,40px);height:clamp(28px,6vh,40px)}
+.lo .cGrid{padding:6px 0 0;max-height:clamp(110px,38vh,300px)}.lo .cChips{padding:0 0 4px}
 .lo{margin:6px 0 12px}.lo .r2{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:15px}.lo .r2 label{width:110px;opacity:.85}
 .lo select{flex:1;background:#0b0f14;color:#fff;border:2px solid #4a5563;padding:8px;font:700 15px "Trebuchet MS",sans-serif;border-radius:4px}
 .lo select option:disabled{color:#777}.lo .fixed{flex:1;padding:8px;border:2px dashed #3b4450;border-radius:4px;opacity:.8;font-weight:700}
@@ -332,13 +341,19 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
 </div>
 
 <div id="pause" class="overlay hidden">
-  <div class="panel">
-    <h2>Пауза</h2>
-    <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens2" min="0.2" max="3" step="0.1" value="1"><b id="sens2V">1.0</b></div>
-    <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd2" min="2" max="10" step="1" value="6"><b id="rd2V">6</b></div>
-    <div id="loPauseBox"><div style="margin-top:8px">Снаряжение</div><div class="lo" id="loPause"></div></div>
-    <button class="btn" id="resume">Продолжить</button>
-    <button class="btn sm" id="toMenu" style="background:#8a3a2e">Выйти в меню</button>
+  <div class="pbox">
+    <div class="pcol pL">
+      <div class="ptitle">ПАУЗА</div>
+      <button class="mbtn big" id="resume"><span>Продолжить</span></button>
+      <div class="mh">Настройки</div>
+      <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens2" min="0.2" max="3" step="0.1" value="1"><b id="sens2V">1.0</b></div>
+      <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd2" min="2" max="10" step="1" value="6"><b id="rd2V">6</b></div>
+      <button class="mbtn danger" id="toMenu"><span>Выйти в меню</span></button>
+    </div>
+    <div class="pcol pR" id="loPauseBox">
+      <div class="mh">Снаряжение</div>
+      <div class="lo" id="loPause"></div>
+    </div>
   </div>
 </div>
 
@@ -1646,23 +1661,38 @@ const Loadout={
   bindCust(){
     for(const k of[0,1])$('cs'+k).onclick=()=>{this.cSlot=k;this.cView=this.pick[k];this.renderCust();Menu3D.setWeapon(this.cView);};
   },
+  pSlot:0,pCat:'all',
+  /* Снаряжение в паузе: карточки слотов, фильтр по классам и плитки оружия (клик - взять в выбранный слот) */
   render(el){
     if(!el)return;el.innerHTML='';
-    const row=(label,k)=>{
-      const r=document.createElement('div');r.className='r2';const l=document.createElement('label');l.textContent=label;r.appendChild(l);
-      const sel=document.createElement('select');
-      for(let id=0;id<NW;id++){
-        if(id===KNIFE)continue;
-        const o=document.createElement('option'),lock=!this.unlocked(id);
-        o.value=id;o.textContent=WDEF[id].name+(lock?' — с ур. '+WDEF[id].unlock:'');o.disabled=lock;sel.appendChild(o);
-      }
-      sel.value=this.pick[k];sel.onchange=()=>this.set(k,+sel.value);
-      // выпадающий список на телефоне не должен запускать выстрелы/обзор
-      sel.addEventListener('pointerdown',e=>e.stopPropagation());
-      r.appendChild(sel);el.appendChild(r);
+    const sl=document.createElement('div');sl.className='pslots';
+    const card=(k,label)=>{
+      const d=document.createElement('div');d.className='cslot'+(k===this.pSlot?' on':'')+(k<0?' fixed':'');
+      d.innerHTML='<small>'+label+'</small><div class="cn">'+(k<0?'Нож':WDEF[this.pick[k]].name)+'</div>';
+      if(k>=0){const cv=document.createElement('canvas');cv.width=cv.height=40;UI.weaponIcon(cv.getContext('2d'),this.pick[k]);d.appendChild(cv);d.onclick=()=>{this.pSlot=k;this.render(el);};}
+      sl.appendChild(d);
     };
-    row('Основное',0);row('Запасное',1);
-    const r=document.createElement('div');r.className='r2';r.innerHTML='<label>Холодное</label><div class="fixed">Нож</div>';el.appendChild(r);
+    card(0,'ОСНОВНОЕ');card(1,'ЗАПАСНОЕ');card(-1,'ХОЛОДНОЕ');el.appendChild(sl);
+    const ch=document.createElement('div');ch.className='cChips';
+    for(const c of this.CATS){const b=document.createElement('button');b.className='chip'+(c[0]===this.pCat?' on':'');b.textContent=c[1];b.onclick=()=>{this.pCat=c[0];this.render(el);};ch.appendChild(b);}
+    el.appendChild(ch);
+    const gr=document.createElement('div');gr.className='cGrid';
+    const cat=this.CATS.find(c=>c[0]===this.pCat),order=[];
+    for(let id=0;id<NW;id++)if(id!==KNIFE&&(!cat[2]||cat[2].includes(id)))order.push(id);order.sort((a,b)=>WDEF[a].unlock-WDEF[b].unlock||a-b);
+    for(const id of order){
+      const lock=!this.unlocked(id),slot=this.pick.indexOf(id),d=document.createElement('div');
+      d.className='ctile'+(lock?' lock':'')+(slot>=0?' eq':'')+(slot===this.pSlot?' view':'');
+      if(slot>=0){const t=document.createElement('span');t.className='sl';t.textContent=slot?'ЗАП':'ОСН';d.appendChild(t);}
+      const cv=document.createElement('canvas');cv.width=cv.height=40;UI.weaponIcon(cv.getContext('2d'),id);d.appendChild(cv);
+      const nm=document.createElement('span');nm.className='nm';nm.textContent=WDEF[id].name;d.appendChild(nm);
+      const cl=document.createElement('span');cl.className='cl';cl.textContent=this.catOf(id);d.appendChild(cl);
+      if(lock){const e=document.createElement('em');e.textContent='Ур. '+WDEF[id].unlock;d.appendChild(e);}
+      d.onclick=()=>{if(lock){UI.msg('Оружие откроется на уровне '+WDEF[id].unlock,1.6);return;}this.set(this.pSlot,id);};
+      // плитки на телефоне не должны запускать выстрелы/обзор
+      d.addEventListener('pointerdown',e=>e.stopPropagation());
+      gr.appendChild(d);
+    }
+    el.appendChild(gr);
   },
   renderAll(){this.render($('loPause'));this.renderCust();if(typeof mmSubs==='function')mmSubs();}
 };
@@ -3049,7 +3079,7 @@ async function startGame(){
   G.ready=true;acc=0;last=performance.now();
   G.state=isLocked()?'playing':'paused';
   if(G.state==='paused')$('pause').classList.remove('hidden');
-  {const h=document.querySelector('#pause h2');if(h)h.textContent=NET.on?'Матч идёт — нажмите «Продолжить»':'Пауза';}
+  {const h=document.querySelector('#pause .ptitle');if(h)h.textContent=NET.on?'МАТЧ ИДЁТ':'ПАУЗА';}
 }
 const isLocked=()=>TOUCH?fakeLock:document.pointerLockElement===$('game');
 function setLocked(locked){
