@@ -147,8 +147,7 @@ body.touch #tbtns{display:block;position:absolute;inset:0;pointer-events:none}
 .tb.on,.tb.tog{background:rgba(255,255,255,.4);border-color:#fff}
 .tb b{display:block;font-size:11px;color:#ffe36b}
 .tb.fire{width:var(--b);height:var(--b);right:calc(var(--g)*1.5);bottom:calc(var(--g)*1.5);background:rgba(200,50,40,.5);border-color:#ffb0a8;font-size:14px}
-.tb.fire2{left:0;top:0;width:44vw;height:50vh;border-radius:0 0 40px 0;border-width:0 3px 3px 0;background:rgba(200,50,40,.12);border-color:rgba(255,176,168,.4);font-size:15px;align-items:flex-end;justify-content:flex-end;padding:0 18px 14px 0;opacity:.9}
-.tb.fire2.on{background:rgba(200,50,40,.3)}
+.tb.fire2{left:0;top:0;width:44vw;height:50vh;border-radius:0;border:0;background:transparent;color:transparent;text-shadow:none;font-size:0}   /* зона стрельбы невидима */
 .tb.jump{width:var(--m);height:var(--m);right:calc(var(--g)*1.5 + (var(--b) - var(--m))/2);bottom:calc(var(--g)*2.5 + var(--b));font-size:22px}
 .tb.aim{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*2.5)}
 .tb.rel{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*3.5 + var(--m));font-size:22px}
@@ -201,7 +200,13 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
 #mmSide{width:min(410px,48vw);padding:clamp(12px,4vh,40px) clamp(14px,3vw,40px);overflow-y:auto;display:flex;flex-direction:column;justify-content:center}
 #mmSide h1{font-size:clamp(24px,6.4vh,46px);letter-spacing:3px;line-height:1;margin-bottom:6px;text-shadow:3px 3px 0 #b9382c,6px 6px 0 #2b62c4}
 #mmSide .sub{opacity:.75;margin-bottom:4px;font-size:clamp(11px,1.9vh,14px)}
-#mmSide #lvlinfo{color:#ffe36b;opacity:1;margin-bottom:clamp(6px,2vh,16px)}
+#lvlCard{display:flex;align-items:center;gap:12px;margin:clamp(6px,1.6vh,12px) 0 clamp(6px,2vh,16px);padding:clamp(6px,1.4vh,10px) 12px;background:rgba(10,14,20,.72);border-left:6px solid #ffd23f}
+#lvlCard .lvb{flex:none;width:clamp(34px,6.4vh,50px);height:clamp(34px,6.4vh,50px);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(16px,3.2vh,24px);color:#111;background:#ffd23f;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+#lvlCard .lvt{flex:1;min-width:0}#lvlCard .lvh{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:clamp(11px,2vh,14px)}#lvlCard .lvh span+span{opacity:.65;font-weight:700}
+.xbar{height:clamp(5px,1vh,8px);background:rgba(255,255,255,.14);margin:4px 0}.xbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff9d00,#ffe36b);transition:width .4s}
+#lvlCard .lvn{font-size:clamp(9px,1.6vh,12px);opacity:.75}
+.mbtn small{display:block;margin-top:2px;font-size:clamp(9px,1.5vh,11px);font-weight:700;letter-spacing:1px;text-transform:none;opacity:.7}
+.mbtn.big small{opacity:.85}
 .mbtn{display:block;width:100%;text-align:left;padding:clamp(8px,2.3vh,16px) 18px;margin-top:clamp(5px,1.2vh,9px);font-family:inherit;font-weight:900;font-size:clamp(14px,2.7vh,20px);letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:rgba(22,28,38,.78);border:0;border-left:6px solid #4a5563;cursor:pointer;transition:background .12s,padding .12s,border-color .12s;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
 .mbtn:hover,.mbtn:active{background:rgba(58,72,92,.92);border-left-color:#ffd23f;padding-left:26px}
 .mbtn.big{background:#3f9b36;border-left-color:#a6f59a}.mbtn.big:hover{background:#4cb242}
@@ -221,18 +226,25 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
 .cslot small{display:block;font-size:clamp(9px,1.6vh,11px);letter-spacing:3px;opacity:.6;font-weight:800}
 .cslot .cn{font-size:clamp(14px,2.8vh,21px);font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 .cslot canvas{position:absolute;right:8px;bottom:4px;width:clamp(36px,8vh,58px);height:clamp(36px,8vh,58px);image-rendering:pixelated;opacity:.9}
-.cRight{background:rgba(12,16,22,.78);border:2px solid #333c48;padding:clamp(8px,2vh,16px) 14px}
+.cRight{display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;background:rgba(12,16,22,.78);border:2px solid #333c48;padding:clamp(8px,2vh,16px) 14px}
 .cRight h3{font-size:clamp(15px,3vh,23px);letter-spacing:1.5px;text-transform:uppercase;line-height:1.1}
 .cRight .st{font-size:clamp(10px,1.8vh,13px);margin:3px 0 clamp(6px,1.6vh,12px);font-weight:800;color:#8fd987}.cRight .st.lk{color:#ffb52e}
 .sr{margin:clamp(3px,1vh,8px) 0;font-size:clamp(10px,1.8vh,13px);font-weight:800;letter-spacing:1.5px}
 .sr .bar{height:clamp(6px,1.2vh,9px);background:rgba(255,255,255,.12);margin-top:2px}.sr .bar i{display:block;height:100%;background:linear-gradient(90deg,#d97b1e,#ffd23f)}
-.cRight .ex{font-size:clamp(10px,1.7vh,12px);opacity:.7;margin-top:clamp(4px,1.2vh,10px)}
-.cGrid{display:flex;gap:clamp(5px,1vw,10px);overflow-x:auto;padding:8px clamp(12px,3vw,32px) clamp(8px,2.4vh,22px);scrollbar-width:thin}
-.ctile{position:relative;flex:none;width:clamp(84px,12.5vw,126px);padding:clamp(5px,1.2vh,9px) 6px 6px;text-align:center;background:rgba(12,16,22,.85);border:2px solid #333c48;cursor:pointer;transition:transform .1s,border-color .1s}
+.cRight .ex{font-size:clamp(10px,1.7vh,12px);opacity:.7;margin:clamp(4px,1.2vh,10px) 0}
+.cChips{display:flex;gap:6px;padding:0 clamp(12px,3vw,32px) 4px;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;padding:clamp(4px,1vh,7px) clamp(10px,1.6vw,16px);font:800 clamp(10px,1.8vh,13px) inherit;font-family:inherit;letter-spacing:1.5px;text-transform:uppercase;color:#cfd6df;background:rgba(12,16,22,.85);border:2px solid #333c48;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.chip.on{color:#111;background:#ffd23f;border-color:#ffd23f}
+.cGrid{display:flex;flex-wrap:wrap;gap:clamp(5px,1vw,10px);overflow-y:auto;max-height:clamp(84px,25vh,210px);padding:6px clamp(12px,3vw,32px) clamp(8px,2.4vh,22px);scrollbar-width:thin}
+.cEq{flex:none;position:sticky;bottom:0;display:block;width:100%;margin-top:auto;padding:clamp(7px,1.6vh,12px);font:900 clamp(11px,2vh,15px) inherit;font-family:inherit;letter-spacing:2px;text-transform:uppercase;color:#fff;background:#3f9b36;border:0;border-left:6px solid #a6f59a;cursor:pointer}
+.cEq:hover{background:#4cb242}.cEq:disabled{background:rgba(70,80,94,.8);border-left-color:#4a5563;color:#9aa5b3;cursor:default}
+.ctile .cl{display:block;font-size:clamp(8px,1.4vh,10px);letter-spacing:2px;opacity:.55;font-weight:800;text-transform:uppercase}
+.ctile .sl{position:absolute;left:5px;top:3px;font:900 clamp(8px,1.4vh,10px) monospace;color:#ffd23f}
+.ctile{position:relative;flex:none;width:clamp(78px,10.6vw,116px);padding:clamp(5px,1.2vh,9px) 6px 6px;text-align:center;background:rgba(12,16,22,.85);border:2px solid #333c48;cursor:pointer;transition:transform .1s,border-color .1s}
 .ctile:hover{border-color:#8a98aa;transform:translateY(-3px)}
 .ctile canvas{width:clamp(38px,9vh,60px);height:clamp(38px,9vh,60px);image-rendering:pixelated}
 .ctile .nm{display:block;font-size:clamp(9px,1.7vh,12px);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ctile.eq{border-color:#ffd23f;background:rgba(48,42,14,.88)}.ctile.eq::after{content:"✔";position:absolute;right:5px;top:2px;color:#ffd23f;font-size:12px}
+.ctile.eq{border-color:#ffd23f;background:rgba(48,42,14,.88)}.ctile.eq::after{content:none}
 .ctile.view{border-color:#fff}
 .ctile.lock canvas,.ctile.lock .nm{opacity:.35}.ctile em{position:absolute;left:0;right:0;top:38%;font-style:normal;font-weight:900;font-size:clamp(10px,1.9vh,13px);color:#ffb52e;text-shadow:0 1px 2px #000}
 </style>
@@ -278,13 +290,13 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
   <div id="mmSide">
     <h1>VOXEL STRIKE</h1>
     <div class="sub">Командный бой в блочном мире</div>
-    <div class="sub" id="lvlinfo"></div>
+    <div id="lvlCard"><div class="lvb" id="lvB">1</div><div class="lvt"><div class="lvh"><span id="lvT">Уровень 1</span><span id="lvX"></span></div><div class="xbar"><i id="lvBar"></i></div><div class="lvn" id="lvN"></div></div></div>
     <div id="installBox" class="hidden"><button class="btn sm" id="installBtn" style="background:#2b62c4">Установить как приложение (без панелей браузера)</button></div>
     <div id="iosHint" class="sub hidden" style="color:#ffe36b;opacity:1">На iPhone: «Поделиться» → «На экран „Домой“» — игра откроется на весь экран.</div>
     <div id="mmMain" class="mmpage">
-      <button class="mbtn big" id="play">Начать игру</button>
-      <button class="mbtn" id="bCust">Кастомизация</button>
-      <button class="mbtn" id="bSetup">Режим и карта</button>
+      <button class="mbtn big" id="play"><span id="playT">Начать игру</span><small id="playS"></small></button>
+      <button class="mbtn" id="bCust">Снаряжение<small id="custS"></small></button>
+      <button class="mbtn" id="bSetup">Режим и карта<small id="setS"></small></button>
       <button class="mbtn" id="bOpt">Настройки</button>
     </div>
     <div id="mmSetup" class="mmpage hidden">
@@ -314,6 +326,7 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
       </div>
       <div class="cRight" id="cStats"></div>
     </div>
+    <div class="cChips" id="cChips"></div>
     <div class="cGrid" id="cGrid"></div>
   </div>
 </div>
@@ -1496,7 +1509,11 @@ const Prog={
   refreshMenu(){
     const nx=WDEF.find(w=>w.unlock>this.level);
     Loadout.renderAll();
-    $('lvlinfo').textContent='Уровень '+this.level+' · '+this.xp+' XP'+(nx?' · следующее оружие: '+nx.name+' (ур. '+nx.unlock+')':' · всё оружие открыто');
+    const lo=this.cum(this.level),hi=this.cum(this.level+1);
+    $('lvB').textContent=this.level;$('lvT').textContent='Уровень '+this.level;$('lvX').textContent=this.xp+' / '+hi+' XP';
+    $('lvBar').style.width=Math.round(clamp((this.xp-lo)/(hi-lo),0,1)*100)+'%';
+    $('lvN').textContent=nx?'Следующее оружие: '+nx.name+' (ур. '+nx.unlock+')':'Всё оружие открыто';
+    if(typeof mmSubs==='function')mmSubs();
   },
   add(n,silent){
     this.matchPts+=n;this.xp+=n;
@@ -1586,7 +1603,9 @@ const Loadout={
     if(was&&!this.ids().includes(rk)){Player.sel=0;Player.swapT=.3;UI.refreshSel();}
   },
   /* Экран кастомизации (главное меню): слоты, список оружия, характеристики; 3D-модель крутится по центру */
-  cSlot:0,cView:0,
+  cSlot:0,cView:0,cCat:'all',
+  CATS:[['all','Все',null],['pist','Пистолеты',[0,8,9]],['auto','Автоматы',[1,4,5]],['shot','Дробовики',[2,7]],['heavy','Тяжёлое',[3,6]]],
+  catOf(id){const c=this.CATS.find(c=>c[2]&&c[2].includes(id));return c?c[1]:'';},
   stat(id){
     const w=WDEF[id],tot=w.rocket?110:w.dmg*(w.pellets>1?w.pellets*.5:1)*(w.dual?1.2:1);
     return[['Урон',tot/105],['Скорострельность',(1/w.interval)/12],['Дальность',(w.rocket?170:w.range)/170],['Точность',1-w.spread/.07],['Магазин',w.mag/100]];
@@ -1597,22 +1616,31 @@ const Loadout={
       const id=this.pick[k],el=$('cs'+k);el.classList.toggle('on',this.cSlot===k);el.querySelector('.cn').textContent=WDEF[id].name;
       const g=el.querySelector('canvas').getContext('2d');g.clearRect(0,0,40,40);UI.weaponIcon(g,id);
     }
+    const ch=$('cChips');ch.innerHTML='';
+    for(const c of this.CATS){const b=document.createElement('button');b.className='chip'+(c[0]===this.cCat?' on':'');b.textContent=c[1];b.onclick=()=>{this.cCat=c[0];this.renderCust();};ch.appendChild(b);}
     gr.innerHTML='';
-    const order=[];for(let id=0;id<NW;id++)if(id!==KNIFE)order.push(id);order.sort((a,b)=>WDEF[a].unlock-WDEF[b].unlock||a-b);
+    const cat=this.CATS.find(c=>c[0]===this.cCat),order=[];
+    for(let id=0;id<NW;id++)if(id!==KNIFE&&(!cat[2]||cat[2].includes(id)))order.push(id);order.sort((a,b)=>WDEF[a].unlock-WDEF[b].unlock||a-b);
     for(const id of order){
-      const lock=!this.unlocked(id),d=document.createElement('div');
-      d.className='ctile'+(lock?' lock':'')+(this.pick.includes(id)?' eq':'')+(id===this.cView?' view':'');
+      const lock=!this.unlocked(id),d=document.createElement('div'),slot=this.pick.indexOf(id);
+      d.className='ctile'+(lock?' lock':'')+(slot>=0?' eq':'')+(id===this.cView?' view':'');
+      if(slot>=0){const t=document.createElement('span');t.className='sl';t.textContent=slot?'ЗАП':'ОСН';d.appendChild(t);}
       const cv=document.createElement('canvas');cv.width=cv.height=40;UI.weaponIcon(cv.getContext('2d'),id);d.appendChild(cv);
       const nm=document.createElement('span');nm.className='nm';nm.textContent=WDEF[id].name;d.appendChild(nm);
+      const cl=document.createElement('span');cl.className='cl';cl.textContent=this.catOf(id);d.appendChild(cl);
       if(lock){const e=document.createElement('em');e.textContent='Ур. '+WDEF[id].unlock;d.appendChild(e);}
-      d.onclick=()=>{this.cView=id;if(!lock)this.set(this.cSlot,id);else this.renderCust();Menu3D.setWeapon(id);};
+      d.onclick=()=>{this.cView=id;this.renderCust();Menu3D.setWeapon(id);};   // клик - осмотр, экипировка кнопкой справа
       gr.appendChild(d);
     }
     const v=this.cView,w=WDEF[v],lock=!this.unlocked(v);
     let h='<h3>'+w.name+'</h3><div class="st'+(lock?' lk':'')+'">'+(lock?'Откроется на уровне '+w.unlock:'Доступно')+'</div>';
     for(const s of this.stat(v))h+='<div class="sr">'+s[0].toUpperCase()+'<div class="bar"><i style="width:'+Math.round(clamp(s[1],.04,1)*100)+'%"></i></div></div>';
     h+='<div class="ex">Магазин '+w.mag+' · запас '+w.reserve+(w.auto?' · автоматический огонь':'')+'</div>';
+    h+='<button class="cEq" id="cEq"></button>';
     $('cStats').innerHTML=h;
+    const eb=$('cEq'),here=this.pick[this.cSlot]===v;
+    eb.textContent=lock?'Закрыто · ур. '+w.unlock:here?'Уже в слоте':'Взять в '+(this.cSlot?'запасное':'основное');eb.disabled=lock||here;
+    eb.onclick=()=>{this.set(this.cSlot,v);};
     $('cLvl').textContent='Уровень '+Prog.level+' · '+Prog.xp+' XP';
   },
   bindCust(){
@@ -1636,7 +1664,7 @@ const Loadout={
     row('Основное',0);row('Запасное',1);
     const r=document.createElement('div');r.className='r2';r.innerHTML='<label>Холодное</label><div class="fixed">Нож</div>';el.appendChild(r);
   },
-  renderAll(){this.render($('loPause'));this.renderCust();}
+  renderAll(){this.render($('loPause'));this.renderCust();if(typeof mmSubs==='function')mmSubs();}
 };
 
 const Player={
@@ -2278,7 +2306,7 @@ function buildViewmodels(){
       for(let i=0;i<5;i++)B(.12,.12,.012,DK,0,.03,-.4+i*.15);B(.118,.118,.03,0xd9b324,0,.03,-.52);B(.118,.118,.03,0xd9b324,0,.03,.12);
       dotSight(g,.126,0,1);B(.12,.12,.04,DK,0,.03,.34);B(.1,.04,.14,DK,0,-.06,.1);B(.08,.016,.12,ST,0,.095,-.2);
       B(.012,.024,.024,ST,0,.0,.2);B(.012,.012,.1,PL,0,-.05,.0);B(.012,.03,.012,ST,0,-.03,-.03);
-      return{mz:[0,.03,-.92],mov:null,mag:rk,rt:'rocket',amp:.5,rh:[0,-.1,.0],lh:[0,-.1,-.3]};},
+      return{mz:[0,.03,-.92],mov:null,mag:rk,rt:'rocket',amp:.5,rh:[0,-.1,.0],lh:[0,-.1,-.3],vo:[-.07,.05,-.08]};},
     // 7 — двухстволка (стволы переламываются вниз при перезарядке)
     g=>{const B=mk(g);const PY=-.01,PZ=-.05,brk=new THREE.Group();brk.position.set(0,PY,PZ);g.add(brk);
       const BB=(w,h,d,c,x,y,z)=>{const m=bx(w,h,d,c,x,y-PY,z-PZ);brk.add(m);return m;};
@@ -2311,7 +2339,7 @@ function buildViewmodels(){
       const R=pist(0),L=pist(-.3);
       return{mz:[0,.05,-.27],mov:R.sl,mov2:L.sl,mt:'slide',amt:.07,mag:R.mg,mag2:L.mg,pg:[R.pg,L.pg],rt:'dual',amp:.2,ox:-.09,mzx:[0,-.3],rh:[0,-.07,.04],lh:[-.3,-.07,.04]};},
     // 10 — нож: рукоять в кулаке стоит вертикально, лезвие уходит вверх-вперёд
-    g=>{const kn=new THREE.Group();kn.position.set(-.01,-.005,-.04);kn.rotation.set(-1.0,0,.08);g.add(kn);
+    g=>{const kn=new THREE.Group();kn.position.set(0,0,0);kn.rotation.set(-.95,.5,.12);kn.scale.setScalar(1.6);g.add(kn);
       const K=(w,h,d,c,x,y,z,rx)=>{const m=bx(w,h,d,c,x,y,z);if(rx)m.rotation.x=rx;kn.add(m);return m;};
       for(let i=0;i<5;i++)K(.04,.022,.04,i%2?0x2e2118:0x3d2e20,0,-.05+i*.022,0);     // обмотка рукояти
       K(.044,.018,.044,0x9aa3ad,0,-.075,0);K(.036,.01,.036,DK,0,-.086,0);               // навершие
@@ -2319,7 +2347,7 @@ function buildViewmodels(){
       K(.012,.2,.044,0xd5dbe2,0,.18,.0);K(.008,.2,.012,0xf1f4f7,0,.18,-.026);           // лезвие и режущая кромка
       K(.012,.05,.036,0xd5dbe2,0,.31,-.004,-.35);K(.01,.03,.02,0xe6eaee,0,.345,-.014,-.7); // остриё
       K(.006,.17,.014,0x9ba4ae,0,.17,.03);                                              // обух
-      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,0,0],lh:[-.2,-.22,.1]};}
+      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.01,.0],lh:[-.6,-.6,.3],vo:[-.08,.1,-.02]};}
   ];
   const fm=new THREE.MeshBasicMaterial({color:0xffe38a,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false});
   for(let i=0;i<NW;i++){
@@ -2329,7 +2357,7 @@ function buildViewmodels(){
     for(const k of['mag','mag2'])if(d[k]){d[k].userData.y0=d[k].position.y;d[k].userData.z0=d[k].position.z;}
     const fl=new THREE.Group();[[.18,.02,.02],[.02,.18,.02],[.07,.07,.05]].forEach(q=>fl.add(new THREE.Mesh(new THREE.BoxGeometry(q[0],q[1],q[2]),fm)));
     fl.position.set(d.mz[0],d.mz[1],d.mz[2]);fl.visible=false;g.add(fl);
-    g.userData={arms:A,flash:fl,melee:!!WDEF[i].melee,mov:d.mov,mov2:d.mov2||null,mag2:d.mag2||null,pg:d.pg||null,brk:d.brk||null,ox:d.ox||0,mzx:d.mzx||null,mt:d.mt,amt:d.amt,mag:d.mag,rt:d.rt,amp:d.amp||0,bolt:d.bolt||null,magBase:d.mag?d.mag.position.clone():null};
+    g.userData={arms:A,flash:fl,melee:!!WDEF[i].melee,mov:d.mov,mov2:d.mov2||null,mag2:d.mag2||null,pg:d.pg||null,brk:d.brk||null,ox:d.ox||0,vo:d.vo||null,mzx:d.mzx||null,mt:d.mt,amt:d.amt,mag:d.mag,rt:d.rt,amp:d.amp||0,bolt:d.bolt||null,magBase:d.mag?d.mag.position.clone():null};
     g.visible=false;wScene.add(g);VM.push(g);
   }
 }
@@ -2676,7 +2704,7 @@ const VS={sprint:0,strafe:0,dip:0,dipV:0,air:false,airVy:0};
 const ease=x=>{x=x<0?0:(x>1?1:x);return x*x*(3-2*x);};
 const seq=(t,a,b)=>ease((t-a)/(b-a));
 const _lh=new THREE.Vector3(),_rh=new THREE.Vector3(),_mp=new THREE.Vector3(),_pk=new THREE.Vector3(),_hm=new THREE.Vector3(),_pc=new THREE.Vector3();
-let vmKickRoll=0;
+let vmKickRoll=0;const ZV=[0,0,0];
 function updateViewmodel(P,dt,wi,moving,sprint){
   const g=VM[wi],u=g.userData,w=WDEF[wi],A=u.arms,adsK=P.ads,rk=w.recoil,ak=1-adsK*.8;
   const swE=ease(P.swapT>0?P.swapT/.3:0);
@@ -2693,9 +2721,10 @@ function updateViewmodel(P,dt,wi,moving,sprint){
   vmSw.x+=(clamp(-dyaw*1.6,-.07,.07)-vmSw.x)*ts;vmSw.y+=(clamp(dpit*1.6,-.05,.05)-vmSw.y)*ts;
   const mv=moving?1:0,bf=1+VS.sprint*.9,bobX=Math.sin(vmBob)*.012*mv*bf,bobY=Math.sin(vmBob*2+.6)*.011*mv*bf;
   const br=Math.sin(performance.now()/1000*1.4)*.004,jy=clamp(P.vy*.004,-.04,.04),kk2=P.kick*(1-adsK*.55);
-  let px=.24+u.ox+(bobX+vmSw.x+VS.strafe*.015)*ak,
-      py=-.21+(bobY+br+vmSw.y-jy+VS.dip)*ak-swE*.42-VS.sprint*.06,
-      pz=-.55+kk2*(.04+rk*1.5)+VS.sprint*.05+swE*.08;
+  const vo=u.vo||ZV;
+  let px=.18+vo[0]+u.ox+(bobX+vmSw.x+VS.strafe*.015)*ak,
+      py=-.2+vo[1]+(bobY+br+vmSw.y-jy+VS.dip)*ak-swE*.42-VS.sprint*.06,
+      pz=-.6+vo[2]+kk2*(.04+rk*1.5)+VS.sprint*.05+swE*.08;
   let rx=kk2*(.08+rk*4)+VS.sprint*.35+vmSw.y*1.5*ak+swE*.9+bobY*.8,
       ry=VS.sprint*.5+vmSw.x*2*ak-swE*.35+bobX*.8,
       rz=-VS.sprint*.14-VS.strafe*.05*ak+bobX*.5+vmKickRoll*kk2;
@@ -3189,12 +3218,17 @@ $('bCust').onclick=()=>mmPage('cust');$('bSetup').onclick=()=>mmPage('setup');$(
 for(const b of document.querySelectorAll('#mmSide [data-back]'))b.onclick=()=>mmPage('main');
 Loadout.bindCust();
 // меню
-for(let i=0;i<4;i++)$('map'+i).onclick=()=>{G.map=i;for(let j=0;j<4;j++)$('map'+j).classList.toggle('on',j===i);};
+for(let i=0;i<4;i++)$('map'+i).onclick=()=>{G.map=i;for(let j=0;j<4;j++)$('map'+j).classList.toggle('on',j===i);mmSubs();};
+function mmSubs(){
+  const mp=['Холмы','Пустыня','Арена','Горы'][G.map]||'',md=G.mode==='tdm'?'Команды':G.mode==='ffa'?'Каждый сам за себя':'Сеть 1 на 1';
+  $('playS').textContent=mp+' · '+md;$('setS').textContent=mp+' · '+md;
+  $('custS').textContent=WDEF[Loadout.pick[0]].name+' + '+WDEF[Loadout.pick[1]].name;
+}
 function setMode(m){
   G.mode=m;G.ns=false;
   $('modeT').classList.toggle('on',m==='tdm');$('modeF').classList.toggle('on',m==='ffa');$('modeN').classList.toggle('on',m==='duel');
   $('teamPick').classList.toggle('hidden',m!=='tdm');
-  $('play').textContent=m==='duel'?'Играть по сети':'Начать игру';
+  $('playT').textContent=m==='duel'?'Играть по сети':'Начать игру';mmSubs();
 }
 $('modeT').onclick=()=>setMode('tdm');$('modeF').onclick=()=>setMode('ffa');$('modeN').onclick=()=>setMode('duel');
 $('teamR').onclick=()=>{G.team=0;$('teamR').classList.add('on');$('teamB').classList.remove('on');};
