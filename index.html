@@ -2254,7 +2254,7 @@ function buildViewmodels(){
   const dotSight=(g,yc,z,s)=>{
     const add=(w,h,d,c,x,y,zz)=>{const m=bx(w,h,d,c,x*s,yc+y*s,z+zz*s);m.scale.set(s,s,s);g.add(m);};
     add(.04,.01,.09,DK,0,-.034,0);add(.006,.054,.06,GM,.022,-.008,0);add(.006,.054,.06,GM,-.022,-.008,0);
-    add(.05,.008,.07,GM,0,.027,-.005);add(.038,.01,.012,GM,0,-.024,-.034);add(.008,.008,.008,ST,.027,0,.015);
+    add(.05,.008,.07,GM,0,.023,-.005);add(.038,.01,.012,GM,0,-.024,-.034);add(.008,.008,.008,ST,.027,0,.015);
     const lens=new THREE.Mesh(new THREE.BoxGeometry(.038*s,.044*s,.002),GLS);lens.position.set(0,yc,z-.03*s);g.add(lens);
     const dot=new THREE.Mesh(new THREE.BoxGeometry(.0055*s,.0055*s,.0025),DOTM);dot.position.set(0,yc,z-.0305*s);g.add(dot);
   };
@@ -2379,9 +2379,36 @@ function buildViewmodels(){
       K(.006,.17,.014,0x9ba4ae,0,.17,.03);                                              // обух
       return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.07,.04],lh:[-.6,-.6,.3],vo:[-.04,.1,-.02]};}
   ];
+  /* Модели собраны из кубиков вручную, между некоторыми остался воздух: стягиваем соседние грани, если зазор меньше 2 см
+     (сдвигается грань меньшего кубика без детей; повёрнутые детали не трогаем) */
+  const closeGaps=g=>{
+    g.updateMatrixWorld(true);
+    const it=[],V=b=>(b.max.x-b.min.x)*(b.max.y-b.min.y)*(b.max.z-b.min.z);
+    g.traverse(o=>{
+      if(!o.isMesh||o.geometry.type!=='BoxGeometry'||o.material.transparent||o.material.fog===false)return;
+      for(let p=o;p&&p!==g;p=p.parent)if(Math.abs(p.rotation.x)+Math.abs(p.rotation.y)+Math.abs(p.rotation.z)>1e-4)return;
+      it.push({o,b:new THREE.Box3().setFromObject(o)});
+    });
+    const AX=['x','y','z'],ws=new THREE.Vector3();
+    for(let pass=0;pass<2;pass++)for(let i=0;i<it.length;i++)for(let j=i+1;j<it.length;j++){
+      const A=it[i],B=it[j];let ax=-1,sep=0,ok=true;
+      for(let k=0;k<3;k++){
+        const ax1=AX[k],gp=Math.max(A.b.min[ax1]-B.b.max[ax1],B.b.min[ax1]-A.b.max[ax1]);
+        if(gp>.0015&&gp<=.02){if(ax>=0){ok=false;break;}ax=k;sep=gp;}
+        else if(gp>.0015||(gp<=.0015&&gp>-.004)){ok=false;break;}   // другая ось: нужно честное перекрытие
+      }
+      if(!ok||ax<0)continue;
+      const lf=x=>x.o.children.length===0;
+      let m=lf(A)&&lf(B)?(V(A.b)<=V(B.b)?A:B):lf(A)?A:lf(B)?B:null;if(!m)continue;
+      const o=m===A?B:A,k=AX[ax],up=m.b.max[k]<o.b.min[k],size=m.b.max[k]-m.b.min[k];if(size<=0)continue;
+      m.o.parent.getWorldScale(ws);
+      m.o.scale[k]*=(size+sep)/size;m.o.position[k]+=(up?1:-1)*sep/2/ws[k];
+      if(up)m.b.max[k]+=sep;else m.b.min[k]-=sep;
+    }
+  };
   const fm=new THREE.MeshBasicMaterial({color:0xffe38a,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false});
   for(let i=0;i<NW;i++){
-    const g=new THREE.Group(),d=defs[i](g);
+    const g=new THREE.Group(),d=defs[i](g);closeGaps(g);
     const A={L:makeArmRig(g,-1),R:makeArmRig(g,1),gl:new THREE.Vector3().fromArray(d.lh),gr:new THREE.Vector3().fromArray(d.rh),tl:new THREE.Vector3(),tr:new THREE.Vector3()};
     for(const k of['mov','mov2'])if(d[k]){d[k].userData.z0=d[k].position.z;d[k].userData.y0=d[k].position.y;}
     for(const k of['mag','mag2'])if(d[k]){d[k].userData.y0=d[k].position.y;d[k].userData.z0=d[k].position.z;}
@@ -3233,7 +3260,7 @@ if(TOUCH){
   window.addEventListener('resize',checkOrient);window.addEventListener('orientationchange',checkOrient);checkOrient();
   G.rd=4;$('rd').value=4;$('rdV').textContent=4;$('rd2').value=4;$('rd2V').textContent=4;
 }
-if(/[?&]debug=1/.test(location.search))window.__vs={get camera(){return camera;},G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
+if(/[?&]debug=1/.test(location.search))window.__vs={get camera(){return camera;},get VM(){return VM;},G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
 
 // страницы главного меню: основная, режим/карта, настройки, кастомизация
 function mmPage(p){
