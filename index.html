@@ -744,7 +744,10 @@ function stepUp(b,nx,nz){
   if(!b.onGround||b.vy>1)return false;
   const ty=Math.floor(b.y+.02)+1;
   if(ty-b.y>1.001||collides(nx,ty+.001,nz,b.hw,b.h))return false;
-  if(b.isPlayer)b.stepOff=Math.min(1.2,(b.stepOff||0)+(ty-b.y));   // камера плавно догоняет, а не дёргается
+  if(b.isPlayer){   // камера плавно догоняет, а не дёргается
+    b.stepOff=Math.min(1.2,(b.stepOff||0)+(ty-b.y));
+    b.py+=ty-b.y;   // интерполяция кадра уже стартует с новой высоты, иначе подъём учитывается дважды и камера уходит в блок
+  }
   b.y=ty;return true;
 }
 function moveBody(b,dt){
