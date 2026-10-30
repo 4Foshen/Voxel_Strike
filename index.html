@@ -147,7 +147,8 @@ body.touch #tbtns{display:block;position:absolute;inset:0;pointer-events:none}
 .tb.on,.tb.tog{background:rgba(255,255,255,.4);border-color:#fff}
 .tb b{display:block;font-size:11px;color:#ffe36b}
 .tb.fire{width:var(--b);height:var(--b);right:calc(var(--g)*1.5);bottom:calc(var(--g)*1.5);background:rgba(200,50,40,.5);border-color:#ffb0a8;font-size:14px}
-.tb.fire2{width:calc(var(--b)*1.05);height:calc(var(--b)*1.05);left:calc(var(--g)*1.5);top:84px;background:rgba(200,50,40,.42);border-color:#ffb0a8;font-size:13px}
+.tb.fire2{left:0;top:0;width:44vw;height:50vh;border-radius:0 0 40px 0;border-width:0 3px 3px 0;background:rgba(200,50,40,.12);border-color:rgba(255,176,168,.4);font-size:15px;align-items:flex-end;justify-content:flex-end;padding:0 18px 14px 0;opacity:.9}
+.tb.fire2.on{background:rgba(200,50,40,.3)}
 .tb.jump{width:var(--m);height:var(--m);right:calc(var(--g)*1.5 + (var(--b) - var(--m))/2);bottom:calc(var(--g)*2.5 + var(--b));font-size:22px}
 .tb.aim{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*2.5)}
 .tb.rel{width:var(--m);height:var(--m);right:calc(var(--g)*3 + var(--b));bottom:calc(var(--g)*3.5 + var(--m));font-size:22px}
@@ -178,10 +179,62 @@ body.touch #pts{top:22px;font-size:13px}
 body.touch #streak{top:42px;font-size:14px}
 body.touch #score span{padding:3px 14px;font-size:20px;min-width:52px}
 body.touch #score{top:6px}
-body.touch #msg{top:55%;font-size:20px}
+body.touch #msg{top:58%;font-size:14px;padding:0 12px}
+body.touch #medals{top:15%;gap:1px}
+body.touch .medal{font-size:13px;padding:1px 14px;letter-spacing:.5px}
+body.touch .medal b{margin-left:8px}
+body.touch .medal.big{font-size:18px}
+body.touch #banner{top:24%;font-size:28px;text-shadow:0 3px 0 #000,0 0 16px #ff9d00}
+body.touch #banner small{font-size:13px;margin-top:2px}
+body.touch #hitm{font-size:20px}
+body.touch #hitm.kill{font-size:32px}
+body.touch .kf{font-size:11px;padding:2px 7px}
+body.touch .kf i{font-size:9px;margin:0 4px}
+body.touch #killfeed{gap:2px;top:50px;right:8px}
+body.touch #pups{bottom:50px}
+body.touch .pu{font-size:10px;padding:1px 6px;border-left-width:3px}
 body.touch #tab{width:min(560px,70vw);max-height:76vh;padding:8px 12px}
 body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0 -5px 0 rgba(0,0,0,.3),0 -12px 14px 2px rgba(14,18,24,.95)}
 @media (max-height:430px){body.touch .panel{padding:14px 20px}body.touch .panel h1{font-size:30px}body.touch .btn{padding:10px;font-size:17px}}
+/* ===== Главное меню: 3D-сцена на фоне, слева панель кнопок ===== */
+#menu{background:linear-gradient(90deg,rgba(5,8,13,.92) 0,rgba(5,8,13,.66) 32%,rgba(5,8,13,0) 62%);align-items:stretch;justify-content:flex-start}
+#mmSide{width:min(410px,48vw);padding:clamp(12px,4vh,40px) clamp(14px,3vw,40px);overflow-y:auto;display:flex;flex-direction:column;justify-content:center}
+#mmSide h1{font-size:clamp(24px,6.4vh,46px);letter-spacing:3px;line-height:1;margin-bottom:6px;text-shadow:3px 3px 0 #b9382c,6px 6px 0 #2b62c4}
+#mmSide .sub{opacity:.75;margin-bottom:4px;font-size:clamp(11px,1.9vh,14px)}
+#mmSide #lvlinfo{color:#ffe36b;opacity:1;margin-bottom:clamp(6px,2vh,16px)}
+.mbtn{display:block;width:100%;text-align:left;padding:clamp(8px,2.3vh,16px) 18px;margin-top:clamp(5px,1.2vh,9px);font-family:inherit;font-weight:900;font-size:clamp(14px,2.7vh,20px);letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:rgba(22,28,38,.78);border:0;border-left:6px solid #4a5563;cursor:pointer;transition:background .12s,padding .12s,border-color .12s;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.mbtn:hover,.mbtn:active{background:rgba(58,72,92,.92);border-left-color:#ffd23f;padding-left:26px}
+.mbtn.big{background:#3f9b36;border-left-color:#a6f59a}.mbtn.big:hover{background:#4cb242}
+.mbtn.back{background:rgba(40,46,56,.8);font-size:clamp(12px,2.2vh,16px);width:auto;padding-right:30px}
+#mmSide .mh{margin:clamp(4px,1.2vh,10px) 0 2px;font-weight:800;letter-spacing:2px;font-size:clamp(10px,1.8vh,13px);opacity:.7;text-transform:uppercase}
+#mmSide .maps{margin:4px 0 8px}#mmSide .maps button{padding:clamp(6px,1.4vh,10px);font-size:clamp(12px,2vh,15px);font-family:inherit}
+#mmSide .teams{margin:4px 0 8px;gap:6px}#mmSide .teams button{padding:clamp(7px,1.6vh,12px);font-size:clamp(12px,2vh,15px);font-family:inherit}
+#mmSide .row{flex-wrap:wrap;gap:4px 10px;margin:8px 0;font-size:clamp(12px,2vh,15px)}#mmSide .row label{width:100%}
+#mmSide .help{font-size:clamp(10px,1.7vh,13px);margin-top:8px}
+#mmCust{position:absolute;inset:0;display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(5,8,13,.8) 0,rgba(5,8,13,.05) 26%,rgba(5,8,13,.05) 58%,rgba(5,8,13,.94) 100%)}
+.cHead{display:flex;align-items:center;gap:clamp(10px,2vw,22px);padding:clamp(6px,2vh,18px) clamp(12px,3vw,32px)}
+.cHead .mbtn{margin:0}.cHead b{font-size:clamp(16px,4vh,30px);letter-spacing:5px;text-shadow:0 2px 0 #000}.cHead span{margin-left:auto;color:#ffe36b;font-weight:800;font-size:clamp(11px,2vh,15px)}
+.cBody{flex:1;min-height:0;display:flex;justify-content:space-between;gap:12px;padding:0 clamp(12px,3vw,32px)}
+.cLeft,.cRight{width:min(290px,31vw);display:flex;flex-direction:column;gap:clamp(5px,1.4vh,10px);overflow:hidden}
+.cslot{position:relative;padding:clamp(6px,1.6vh,12px) 14px;background:rgba(12,16,22,.8);border:2px solid #333c48;border-left:7px solid #333c48;cursor:pointer;transition:border-color .12s}
+.cslot:hover{border-color:#6a7686}.cslot.on{border-color:#ffd23f;background:rgba(40,36,14,.82)}.cslot.fixed{cursor:default;opacity:.7}.cslot.fixed:hover{border-color:#333c48}
+.cslot small{display:block;font-size:clamp(9px,1.6vh,11px);letter-spacing:3px;opacity:.6;font-weight:800}
+.cslot .cn{font-size:clamp(14px,2.8vh,21px);font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.cslot canvas{position:absolute;right:8px;bottom:4px;width:clamp(36px,8vh,58px);height:clamp(36px,8vh,58px);image-rendering:pixelated;opacity:.9}
+.cRight{background:rgba(12,16,22,.78);border:2px solid #333c48;padding:clamp(8px,2vh,16px) 14px}
+.cRight h3{font-size:clamp(15px,3vh,23px);letter-spacing:1.5px;text-transform:uppercase;line-height:1.1}
+.cRight .st{font-size:clamp(10px,1.8vh,13px);margin:3px 0 clamp(6px,1.6vh,12px);font-weight:800;color:#8fd987}.cRight .st.lk{color:#ffb52e}
+.sr{margin:clamp(3px,1vh,8px) 0;font-size:clamp(10px,1.8vh,13px);font-weight:800;letter-spacing:1.5px}
+.sr .bar{height:clamp(6px,1.2vh,9px);background:rgba(255,255,255,.12);margin-top:2px}.sr .bar i{display:block;height:100%;background:linear-gradient(90deg,#d97b1e,#ffd23f)}
+.cRight .ex{font-size:clamp(10px,1.7vh,12px);opacity:.7;margin-top:clamp(4px,1.2vh,10px)}
+.cGrid{display:flex;gap:clamp(5px,1vw,10px);overflow-x:auto;padding:8px clamp(12px,3vw,32px) clamp(8px,2.4vh,22px);scrollbar-width:thin}
+.ctile{position:relative;flex:none;width:clamp(84px,12.5vw,126px);padding:clamp(5px,1.2vh,9px) 6px 6px;text-align:center;background:rgba(12,16,22,.85);border:2px solid #333c48;cursor:pointer;transition:transform .1s,border-color .1s}
+.ctile:hover{border-color:#8a98aa;transform:translateY(-3px)}
+.ctile canvas{width:clamp(38px,9vh,60px);height:clamp(38px,9vh,60px);image-rendering:pixelated}
+.ctile .nm{display:block;font-size:clamp(9px,1.7vh,12px);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctile.eq{border-color:#ffd23f;background:rgba(48,42,14,.88)}.ctile.eq::after{content:"✔";position:absolute;right:5px;top:2px;color:#ffd23f;font-size:12px}
+.ctile.view{border-color:#fff}
+.ctile.lock canvas,.ctile.lock .nm{opacity:.35}.ctile em{position:absolute;left:0;right:0;top:38%;font-style:normal;font-weight:900;font-size:clamp(10px,1.9vh,13px);color:#ffb52e;text-shadow:0 1px 2px #000}
 </style>
 </head>
 <body>
@@ -222,24 +275,46 @@ body.touch #menu .btn#play{position:sticky;bottom:0;z-index:2;box-shadow:inset 0
 <div id="rotate"><div class="ph"></div><div>Переверните телефон горизонтально<small>Игра рассчитана на альбомную ориентацию</small></div></div>
 
 <div id="menu" class="overlay">
-  <div class="panel">
+  <div id="mmSide">
     <h1>VOXEL STRIKE</h1>
-    <div class="sub">Командный бой в блочном мире. Первые до 20 убийств.</div>
-    <div class="sub" id="lvlinfo" style="color:#ffe36b;opacity:1"></div>
+    <div class="sub">Командный бой в блочном мире</div>
+    <div class="sub" id="lvlinfo"></div>
     <div id="installBox" class="hidden"><button class="btn sm" id="installBtn" style="background:#2b62c4">Установить как приложение (без панелей браузера)</button></div>
     <div id="iosHint" class="sub hidden" style="color:#ffe36b;opacity:1">На iPhone: «Поделиться» → «На экран „Домой“» — игра откроется на весь экран.</div>
-    <div>Карта</div>
-    <div class="maps"><button class="on" id="map0">Холмы</button><button id="map1">Пустыня</button><button id="map2">Арена</button><button id="map3">Горы</button></div>
-    <div>Режим</div>
-    <div class="teams"><button class="m on" id="modeT">Команды с ботами (до 20)</button><button class="m" id="modeF">FFA с ботами (до 15)</button><button class="m" id="modeN">Сетевая 1 на 1 (до 10)</button></div>
-    <div id="teamPick"><div>Ваша команда</div>
-    <div class="teams"><button class="r on" id="teamR">Красные</button><button class="b" id="teamB">Синие</button></div></div>
-    <div id="loMenuBox"><div>Снаряжение <small style="opacity:.6">— остальное оружие открывается с уровнем</small></div><div class="lo" id="loMenu"></div></div>
-    <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens" min="0.2" max="3" step="0.1" value="1"><b id="sensV">1.0</b></div>
-    <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd" min="2" max="10" step="1" value="6"><b id="rdV">6</b></div>
-    <button class="btn" id="play">Играть</button>
-    <div class="help touchhelp"><b>Левый джойстик</b> — ходьба (до упора — бег), <b>свайп справа</b> — обзор, <b>ОГОНЬ</b> справа и <b>ОГОНЬ</b> слева сверху — стрельба (так можно играть тремя пальцами: джойстик, обзор и огонь), <b>ЦЕЛЬ</b> — прицел (нажмите ещё раз, чтобы выключить), <b>▲</b> прыжок, <b>↻</b> перезарядка, внизу — граната, подкат и смена оружия; значки оружия переключают его; <b>Блоки</b> — режим строительства (<b>ЦЕЛЬ</b> там ставит блок), <b>II</b> — пауза. Включён лёгкий автоприцел.</div>
-    <div class="help kbhelp"><b>C</b> подкат на бегу, <b>G</b> граната, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br><b>WASD</b> ходьба, <b>Shift</b> бег, <b>Пробел</b> прыжок, <b>R</b> перезарядка<br><b>ЛКМ</b> стрелять или копать, <b>ПКМ</b> прицелиться (в режиме строительства — поставить блок)<br><b>1–3</b> оружие из вашего набора (меню «Снаряжение» и пауза), <b>Q</b> прошлое оружие, <b>B</b> панель блоков (там 1–8 и колесо выбирают блок), колесо мыши листает оружие, <b>Esc</b> пауза<br>За убийства, хедшоты и серии даются очки и опыт: растите уровень и открывайте новое оружие</div>
+    <div id="mmMain" class="mmpage">
+      <button class="mbtn big" id="play">Начать игру</button>
+      <button class="mbtn" id="bCust">Кастомизация</button>
+      <button class="mbtn" id="bSetup">Режим и карта</button>
+      <button class="mbtn" id="bOpt">Настройки</button>
+    </div>
+    <div id="mmSetup" class="mmpage hidden">
+      <div class="mh">Карта</div>
+      <div class="maps"><button class="on" id="map0">Холмы</button><button id="map1">Пустыня</button><button id="map2">Арена</button><button id="map3">Горы</button></div>
+      <div class="mh">Режим</div>
+      <div class="teams"><button class="m on" id="modeT">Команды с ботами (до 20)</button><button class="m" id="modeF">FFA с ботами (до 15)</button><button class="m" id="modeN">Сетевая 1 на 1 (до 10)</button></div>
+      <div id="teamPick"><div class="mh">Ваша команда</div>
+      <div class="teams"><button class="r on" id="teamR">Красные</button><button class="b" id="teamB">Синие</button></div></div>
+      <button class="mbtn back" data-back>← Назад</button>
+    </div>
+    <div id="mmOpt" class="mmpage hidden">
+      <div class="row"><label>Чувствительность мыши</label><input type="range" id="sens" min="0.2" max="3" step="0.1" value="1"><b id="sensV">1.0</b></div>
+      <div class="row"><label>Дальность прорисовки</label><input type="range" id="rd" min="2" max="10" step="1" value="6"><b id="rdV">6</b></div>
+      <div class="help touchhelp"><b>Левый джойстик</b> — ходьба (до упора — бег), <b>свайп справа</b> — обзор, <b>вся левая верхняя часть экрана</b> и кнопка <b>ОГОНЬ</b> справа — стрельба (так можно играть тремя пальцами), <b>ЦЕЛЬ</b> — прицел (нажмите ещё раз, чтобы выключить), <b>▲</b> прыжок, <b>↻</b> перезарядка, внизу — граната, подкат и смена оружия; значки оружия переключают его; <b>Блоки</b> — режим строительства (<b>ЦЕЛЬ</b> там ставит блок), <b>II</b> — пауза. Включён лёгкий автоприцел.</div>
+      <div class="help kbhelp"><b>C</b> подкат на бегу, <b>G</b> граната, <b>Tab</b> таблица счёта<br><b>ПКМ</b> / <b>Z</b> — два гарпуна (удерживайте, чтобы лететь), только в режиме ноу-скоп<br><b>WASD</b> ходьба, <b>Shift</b> бег, <b>Пробел</b> прыжок, <b>R</b> перезарядка<br><b>ЛКМ</b> стрелять или копать, <b>ПКМ</b> прицелиться (в режиме строительства — поставить блок)<br><b>1–3</b> оружие из вашего набора (кастомизация и пауза), <b>Q</b> прошлое оружие, <b>B</b> панель блоков (там 1–8 и колесо выбирают блок), колесо мыши листает оружие, <b>Esc</b> пауза<br>За убийства, хедшоты и серии даются очки и опыт: растите уровень и открывайте новое оружие</div>
+      <button class="mbtn back" data-back>← Назад</button>
+    </div>
+  </div>
+  <div id="mmCust" class="hidden">
+    <div class="cHead"><button class="mbtn back" id="cBack">← Назад</button><b>СНАРЯЖЕНИЕ</b><span id="cLvl"></span></div>
+    <div class="cBody">
+      <div class="cLeft">
+        <div class="cslot on" id="cs0"><small>ОСНОВНОЕ</small><div class="cn"></div><canvas width="40" height="40"></canvas></div>
+        <div class="cslot" id="cs1"><small>ЗАПАСНОЕ</small><div class="cn"></div><canvas width="40" height="40"></canvas></div>
+        <div class="cslot fixed"><small>ХОЛОДНОЕ</small><div class="cn">Нож</div></div>
+      </div>
+      <div class="cRight" id="cStats"></div>
+    </div>
+    <div class="cGrid" id="cGrid"></div>
   </div>
 </div>
 
@@ -739,6 +814,8 @@ const Sfx={
       case'pistol':this.noise({dur:.14,vol:.55*v,f0:6000,f1:500,pan});this.tone({dur:.12,vol:.4*v,f0:180,f1:60,pan});break;
       case'smg':this.noise({dur:.1,vol:.5*v,f0:5000,f1:700,pan});this.tone({dur:.08,vol:.3*v,f0:150,f1:70,pan,wave:'triangle'});break;
       case'shotgun':this.noise({dur:.4,vol:.95*v,f0:4000,f1:140,pan});this.tone({dur:.3,vol:.6*v,f0:110,f1:40,pan});break;
+      case'deagle':this.noise({dur:.3,vol:.85*v,f0:7000,f1:260,pan});this.tone({dur:.26,vol:.65*v,f0:150,f1:48,pan});this.noise({dur:.04,vol:.4*v,f0:8000,f1:3500,type:'highpass',pan});break;
+      case'dbl':this.noise({dur:.5,vol:1*v,f0:3600,f1:110,pan});this.tone({dur:.34,vol:.7*v,f0:95,f1:34,pan});this.noise({dur:.12,vol:.5*v,f0:900,f1:200,pan,delay:.02});break;
       case'sniper':this.noise({dur:.6,vol:.9*v,f0:8000,f1:160,pan});this.tone({dur:.45,vol:.7*v,f0:90,f1:35,pan});this.noise({dur:.05,vol:.5*v,f0:9000,f1:3000,type:'highpass',pan});break;
       case'reload':this.noise({dur:.05,vol:.4*v,f0:3500,f1:2500,type:'highpass',pan});this.noise({dur:.06,vol:.45*v,f0:2500,f1:1500,type:'bandpass',q:3,delay:.45,pan});this.noise({dur:.05,vol:.5*v,f0:3500,f1:2500,type:'highpass',delay:.85,pan});break;
       case'empty':this.noise({dur:.04,vol:.3*v,f0:3000,f1:2000,type:'highpass',pan});break;
@@ -883,7 +960,7 @@ const Fx={
   dn(x,y,z,txt,col,size){
     const d=this.dnp[this.dnI];this.dnI=(this.dnI+1)%this.dnp.length;
     d.x=x+(Math.random()-.5)*.4;d.y=y;d.z=z+(Math.random()-.5)*.4;d.life=.9;
-    d.el.textContent=txt;d.el.style.color=col;d.el.style.fontSize=size+'px';d.el.style.display='block';
+    d.el.textContent=txt;d.el.style.color=col;d.el.style.fontSize=Math.round(size*(TOUCH?.55:1))+'px';d.el.style.display='block';
   },
   gibs(v,head){
     const cx=v.x,cy=v.y+.9,cz=v.z,sh=PAL[v.col||0].rgb,cols=[sh,[.88,.67,.51],[.18,.21,.32],[.75,.08,.08]];
@@ -1454,11 +1531,14 @@ const WDEF=[
  {name:'Штурмовая винтовка',dmg:19,interval:.095,auto:true,mag:30,reserve:150,spread:.012,pellets:1,recoil:.012,reload:2.0,snd:'rifle',range:110,unlock:5},
  {name:'Пулемёт',dmg:15,interval:.07,auto:true,mag:100,reserve:200,spread:.028,pellets:1,recoil:.009,reload:3.8,snd:'lmg',range:90,unlock:7},
  {name:'Гранатомёт',dmg:0,interval:1.0,auto:false,mag:1,reserve:6,spread:.004,pellets:1,recoil:.08,reload:2.0,snd:'rpg',range:0,unlock:9,rocket:true},
+ {name:'Двухстволка',dmg:13,interval:.3,auto:false,mag:2,reserve:24,spread:.05,pellets:9,recoil:.085,reload:2.3,snd:'dbl',range:36,unlock:6},
+ {name:'Дигл',dmg:52,interval:.34,auto:false,mag:7,reserve:35,spread:.008,pellets:1,recoil:.065,reload:1.7,snd:'deagle',range:100,unlock:2},
+ {name:'Акимбо',dmg:15,interval:.105,auto:true,mag:36,reserve:144,spread:.022,pellets:1,recoil:.011,reload:2.4,snd:'pistol',range:80,unlock:8,dual:true},
  {name:'Нож',dmg:50,interval:.5,auto:false,mag:1,reserve:0,spread:0,pellets:1,recoil:0,reload:1,snd:'bolt',range:2.5,unlock:1,melee:true}
 ];
 const KNIFE=WDEF.length-1;
 // ads: высота верхушки мушки над осью модели (при прицеливании она ставится ровно в центр экрана = точка выстрела), fov при прицеливании
-const ADS=[{y:.118,f:62},{y:.101,f:60},{y:.106,f:64},null,{y:.122,f:58},{y:.136,f:60},{y:.126,f:66},null];
+const ADS=[{y:.118,f:62},{y:.101,f:60},{y:.106,f:64},null,{y:.122,f:58},{y:.136,f:60},{y:.126,f:66},{y:.078,f:66},{y:.12,f:62},null,null];
 const NW=WDEF.length;
 const SLOTS=[];
 let prevSel=0;
@@ -1502,6 +1582,39 @@ const Loadout={
     this.storm=false;const was=cur&&cur.t==='w'&&cur.id===rk;this.rebuild();
     if(was&&!this.ids().includes(rk)){Player.sel=0;Player.swapT=.3;UI.refreshSel();}
   },
+  /* Экран кастомизации (главное меню): слоты, список оружия, характеристики; 3D-модель крутится по центру */
+  cSlot:0,cView:0,
+  stat(id){
+    const w=WDEF[id],tot=w.rocket?110:w.dmg*(w.pellets>1?w.pellets*.5:1)*(w.dual?1.2:1);
+    return[['Урон',tot/105],['Скорострельность',(1/w.interval)/12],['Дальность',(w.rocket?170:w.range)/170],['Точность',1-w.spread/.07],['Магазин',w.mag/100]];
+  },
+  renderCust(){
+    const gr=$('cGrid');if(!gr)return;
+    for(const k of[0,1]){
+      const id=this.pick[k],el=$('cs'+k);el.classList.toggle('on',this.cSlot===k);el.querySelector('.cn').textContent=WDEF[id].name;
+      const g=el.querySelector('canvas').getContext('2d');g.clearRect(0,0,40,40);UI.weaponIcon(g,id);
+    }
+    gr.innerHTML='';
+    const order=[];for(let id=0;id<NW;id++)if(id!==KNIFE)order.push(id);order.sort((a,b)=>WDEF[a].unlock-WDEF[b].unlock||a-b);
+    for(const id of order){
+      const lock=!this.unlocked(id),d=document.createElement('div');
+      d.className='ctile'+(lock?' lock':'')+(this.pick.includes(id)?' eq':'')+(id===this.cView?' view':'');
+      const cv=document.createElement('canvas');cv.width=cv.height=40;UI.weaponIcon(cv.getContext('2d'),id);d.appendChild(cv);
+      const nm=document.createElement('span');nm.className='nm';nm.textContent=WDEF[id].name;d.appendChild(nm);
+      if(lock){const e=document.createElement('em');e.textContent='Ур. '+WDEF[id].unlock;d.appendChild(e);}
+      d.onclick=()=>{this.cView=id;if(!lock)this.set(this.cSlot,id);else this.renderCust();Menu3D.setWeapon(id);};
+      gr.appendChild(d);
+    }
+    const v=this.cView,w=WDEF[v],lock=!this.unlocked(v);
+    let h='<h3>'+w.name+'</h3><div class="st'+(lock?' lk':'')+'">'+(lock?'Откроется на уровне '+w.unlock:'Доступно')+'</div>';
+    for(const s of this.stat(v))h+='<div class="sr">'+s[0].toUpperCase()+'<div class="bar"><i style="width:'+Math.round(clamp(s[1],.04,1)*100)+'%"></i></div></div>';
+    h+='<div class="ex">Магазин '+w.mag+' · запас '+w.reserve+(w.auto?' · автоматический огонь':'')+'</div>';
+    $('cStats').innerHTML=h;
+    $('cLvl').textContent='Уровень '+Prog.level+' · '+Prog.xp+' XP';
+  },
+  bindCust(){
+    for(const k of[0,1])$('cs'+k).onclick=()=>{this.cSlot=k;this.cView=this.pick[k];this.renderCust();Menu3D.setWeapon(this.cView);};
+  },
   render(el){
     if(!el)return;el.innerHTML='';
     const row=(label,k)=>{
@@ -1520,7 +1633,7 @@ const Loadout={
     row('Основное',0);row('Запасное',1);
     const r=document.createElement('div');r.className='r2';r.innerHTML='<label>Холодное</label><div class="fixed">Нож</div>';el.appendChild(r);
   },
-  renderAll(){this.render($('loMenu'));this.render($('loPause'));}
+  renderAll(){this.render($('loPause'));this.renderCust();}
 };
 
 const Player={
@@ -1655,6 +1768,9 @@ const UI={
     else if(id===4){r('#3d4048',4,14,30,7);r('#2a2c32',33,15,6,4);r('#555a63',13,21,5,11);r('#3f5a2c',1,15,8,7);r('#2a2c32',14,11,8,3);}
     else if(id===5){r('#3d4048',3,13,30,9);r('#2a2c32',33,15,6,4);r('#4a5230',12,22,12,9);r('#3f5a2c',1,14,8,8);r('#555a63',24,22,5,8);}
     else if(id===KNIFE){r('#cfd6de',4,19,22,5);r('#9aa3ad',4,23,22,1);r('#cfd6de',26,20,6,3);r('#3a2a1c',27,17,10,7);r('#8a8f96',25,15,3,11);}
+    else if(id===7){r('#2a2c32',3,13,34,3);r('#3d4048',3,17,34,3);r('#7a5230',24,18,6,5);r('#7a5230',1,15,12,9);r('#555a63',14,20,6,3);}
+    else if(id===8){r('#b8bcc4',6,12,28,8);r('#8a8f96',6,12,28,2);r('#2a2c32',6,20,24,3);r('#3d4048',11,23,8,10);r('#2a2c32',33,14,4,5);}
+    else if(id===9){r('#3d4048',2,10,16,6);r('#2a2c32',2,10,16,2);r('#555a63',5,16,6,9);r('#3d4048',22,20,16,6);r('#2a2c32',22,20,16,2);r('#555a63',25,26,6,9);}
     else{r('#4b5a3a',3,15,28,8);r('#8a8f96',0,0,0,0);r('#8a4a22',30,13,8,12);r('#2a2c32',12,23,5,9);r('#2a2c32',22,11,6,4);}
   },
   refreshSel(){
@@ -1814,13 +1930,13 @@ const Soldier={
   },
   outlineMat(){
     if(this._om)return this._om;
-    const m=new THREE.MeshBasicMaterial({color:0xff3a2e,side:THREE.BackSide,polygonOffset:true,polygonOffsetFactor:6,polygonOffsetUnits:6});m.skinning=true;   // сдвиг по глубине: наружу торчит только кромка, а не пятна поверх тела
+    const m=new THREE.MeshBasicMaterial({color:TOUCH?0xff3a2e:0x9e2a22,side:THREE.BackSide,polygonOffset:true,polygonOffsetFactor:6,polygonOffsetUnits:6});m.skinning=true;   // сдвиг по глубине: наружу торчит только кромка, а не пятна поверх тела
     m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <skinning_vertex>',
       ['#include <skinning_vertex>','#ifdef USE_SKINNING',
        'mat4 skm_=skinWeight.x*boneMatX+skinWeight.y*boneMatY+skinWeight.z*boneMatZ+skinWeight.w*boneMatW;',
        'vec3 on_=normalize((bindMatrixInverse*skm_*bindMatrix*vec4(normal,0.0)).xyz);',
        'float od_=-(modelViewMatrix*vec4(transformed,1.0)).z;',
-       'transformed+=on_*min(.12,.02+.0026*od_);','#endif'].join('\n'));};
+       'transformed+=on_*min(.12,.02+.0026*od_)*'+(TOUCH?'1.0':'0.7')+';','#endif'].join('\n'));};
     m.customProgramCacheKey=()=>'vsoutline';
     return this._om=m;
   },
@@ -2160,23 +2276,57 @@ function buildViewmodels(){
       dotSight(g,.126,0,1);B(.12,.12,.04,DK,0,.03,.34);B(.1,.04,.14,DK,0,-.06,.1);B(.08,.016,.12,ST,0,.095,-.2);
       B(.012,.024,.024,ST,0,.0,.2);B(.012,.012,.1,PL,0,-.05,.0);B(.012,.03,.012,ST,0,-.03,-.03);
       return{mz:[0,.03,-.92],mov:null,mag:rk,rt:'rocket',amp:.5,rh:[0,-.1,.0],lh:[0,-.1,-.3]};},
-    // 7 — нож
-    g=>{const B=mk(g);const bl=B(.014,.06,.34,0xd5dbe2,0,.0,-.3);bl.rotation.x=-.12;B(.008,.02,.3,0xf1f4f7,0,.032,-.3).rotation.x=-.12;
-      B(.01,.014,.28,0x9ba4ae,0,-.027,-.3).rotation.x=-.12;B(.012,.05,.06,0xd5dbe2,0,.0,-.49).rotation.x=.55;B(.01,.02,.06,0xaab3bc,0,-.02,-.47).rotation.x=.4;
-      for(let i=0;i<5;i++)B(.016,.012,.014,0x9ba4ae,0,.03+i*.0,-.2-i*.035);
-      B(.05,.03,.025,0x3a3f46,0,-.005,-.12);B(.03,.014,.03,ST,0,.014,-.12);
-      for(let i=0;i<6;i++)B(.036,.046,.026,i%2?0x2e2118:0x3d2e20,0,-.01,-.095+i*.027);B(.04,.046,.02,0x9aa3ad,0,-.01,.07);B(.016,.016,.01,DK,0,-.01,.082);
-      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.04,-.02],lh:[-.12,-.2,.12]};}
+    // 7 — двухстволка (стволы переламываются вниз при перезарядке)
+    g=>{const B=mk(g);const PY=-.01,PZ=-.05,brk=new THREE.Group();brk.position.set(0,PY,PZ);g.add(brk);
+      const BB=(w,h,d,c,x,y,z)=>{const m=bx(w,h,d,c,x,y-PY,z-PZ);brk.add(m);return m;};
+      BB(.032,.04,.64,DK,-.019,.03,-.38);BB(.032,.04,.64,DK,.019,.03,-.38);BB(.012,.014,.62,ST,0,.056,-.38);BB(.07,.012,.64,GM,0,.008,-.38);
+      BB(.074,.052,.2,WD,0,-.012,-.28);for(let i=0;i<4;i++)BB(.078,.056,.008,WD2,0,-.012,-.2-i*.04);
+      BB(.012,.016,.012,BR,0,.07,-.69);BB(.074,.045,.02,ST,0,.03,-.69);BB(.074,.045,.016,ST,0,.03,-.56);
+      B(.066,.085,.19,GM,0,.008,.04);B(.05,.03,.1,ST,0,.058,.02);B(.07,.02,.12,DK,0,-.04,.04);
+      B(.012,.012,.1,PL,0,-.056,.08);B(.008,.03,.008,ST,0,-.04,.07);B(.008,.03,.008,ST,0,-.04,.09);
+      B(.046,.075,.07,WD,0,-.04,.115);B(.056,.09,.3,WD,0,-.03,.28);B(.06,.1,.03,DK,0,-.03,.44);B(.01,.034,.012,ST,.04,.01,-.01);
+      B(.004,.034,.07,DK,.034,.012,.02);B(.06,.04,.18,WD2,0,.032,.27);
+      return{mz:[0,.035,-.72],mov:null,mt:'none',mag:null,brk,rt:'break',rh:[0,-.06,.09],lh:[0,-.04,-.3]};},
+    // 8 — «пустынный орёл»
+    g=>{const B=mk(g);const SL=0xb4b8c0,SL2=0x8d9199;
+      const sl=B(.068,.076,.32,SL,0,.052,-.11);B(.06,.052,.3,GM,0,.002,-.1);B(.058,.14,.085,PL,0,-.075,.04);B(.02,.03,.08,PL,0,-.034,-.06);
+      B(.044,.044,.026,DK,0,.052,-.285);B(.05,.05,.014,SL2,0,.052,-.26);const mg=B(.054,.13,.075,DK,0,-.13,.04);
+      ck(sl,.05,.014,.3,SL2,0,.044,0);for(let i=0;i<6;i++)ck(sl,.072,.054,.006,SL2,0,0,.09+i*.018);
+      for(let i=0;i<3;i++)ck(sl,.07,.012,.04,DK,0,.0,-.1+i*.05);                       // порты на стволе
+      ck(sl,.01,.024,.014,DK,0,.058,-.12);ck(sl,.05,.02,.012,DK,0,.056,.14);          // мушка и целик
+      ck(sl,.004,.03,.07,DK,.035,.01,-.03);
+      ck(mg,.058,.016,.078,ST,0,-.068,0);for(let i=0;i<3;i++)B(.062,.008,.05,DK,0,-.04-i*.028,.042);
+      B(.012,.03,.012,ST,0,-.022,-.03);B(.014,.014,.07,PL,0,-.047,-.066);B(.056,.012,.09,PL,0,-.14,.04);
+      return{mz:[0,.052,-.3],mov:sl,mt:'slide',amt:.09,mag:mg,rt:'mag',amp:.22,rh:[0,-.075,.04],lh:[-.03,-.115,.03]};},
+    // 9 — два пистолета (акимбо)
+    g=>{const pist=(x)=>{const pg=new THREE.Group();pg.position.set(x,0,0);g.add(pg);const P=(...a)=>{const m=bx(...a);pg.add(m);return m;};
+        const sl=P(.058,.066,.27,GM,0,.05,-.1);P(.052,.04,.24,PL,0,.005,-.08);P(.056,.13,.075,PL,0,-.07,.035);P(.02,.03,.07,PL,0,-.032,-.06);P(.034,.034,.02,DK,0,.05,-.245);
+        const mg=P(.052,.12,.07,DK,0,-.12,.035);
+        for(let i=0;i<4;i++)ck(sl,.062,.05,.006,DK,0,0,.075+i*.017);ck(sl,.03,.006,.21,ST,0,.036,0);ck(sl,.01,.016,.012,DK,0,.04,-.11);ck(sl,.04,.014,.012,DK,0,.04,.12);
+        ck(mg,.056,.016,.074,ST,0,-.068,0);P(.014,.014,.07,PL,0,-.047,-.066);P(.058,.012,.08,PL,0,-.135,.035);
+        return{pg,sl,mg};};
+      const R=pist(0),L=pist(-.3);
+      return{mz:[0,.05,-.27],mov:R.sl,mov2:L.sl,mt:'slide',amt:.07,mag:R.mg,mag2:L.mg,pg:[R.pg,L.pg],rt:'dual',amp:.2,ox:-.09,mzx:[0,-.3],rh:[0,-.07,.04],lh:[-.3,-.07,.04]};},
+    // 10 — нож: рукоять в кулаке стоит вертикально, лезвие уходит вверх-вперёд
+    g=>{const kn=new THREE.Group();kn.position.set(-.01,-.005,-.04);kn.rotation.set(-1.0,0,.08);g.add(kn);
+      const K=(w,h,d,c,x,y,z,rx)=>{const m=bx(w,h,d,c,x,y,z);if(rx)m.rotation.x=rx;kn.add(m);return m;};
+      for(let i=0;i<5;i++)K(.04,.022,.04,i%2?0x2e2118:0x3d2e20,0,-.05+i*.022,0);     // обмотка рукояти
+      K(.044,.018,.044,0x9aa3ad,0,-.075,0);K(.036,.01,.036,DK,0,-.086,0);               // навершие
+      K(.07,.014,.034,0x3a3f46,0,.066,0);K(.03,.012,.044,ST,0,.074,0);                  // гарда
+      K(.012,.2,.044,0xd5dbe2,0,.18,.0);K(.008,.2,.012,0xf1f4f7,0,.18,-.026);           // лезвие и режущая кромка
+      K(.012,.05,.036,0xd5dbe2,0,.31,-.004,-.35);K(.01,.03,.02,0xe6eaee,0,.345,-.014,-.7); // остриё
+      K(.006,.17,.014,0x9ba4ae,0,.17,.03);                                              // обух
+      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,0,0],lh:[-.2,-.22,.1]};}
   ];
   const fm=new THREE.MeshBasicMaterial({color:0xffe38a,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false});
   for(let i=0;i<NW;i++){
     const g=new THREE.Group(),d=defs[i](g);
     const A={L:makeArmRig(g,-1),R:makeArmRig(g,1),gl:new THREE.Vector3().fromArray(d.lh),gr:new THREE.Vector3().fromArray(d.rh),tl:new THREE.Vector3(),tr:new THREE.Vector3()};
-    if(d.mov){d.mov.userData.z0=d.mov.position.z;d.mov.userData.y0=d.mov.position.y;}
-    if(d.mag){d.mag.userData.y0=d.mag.position.y;d.mag.userData.z0=d.mag.position.z;}
+    for(const k of['mov','mov2'])if(d[k]){d[k].userData.z0=d[k].position.z;d[k].userData.y0=d[k].position.y;}
+    for(const k of['mag','mag2'])if(d[k]){d[k].userData.y0=d[k].position.y;d[k].userData.z0=d[k].position.z;}
     const fl=new THREE.Group();[[.18,.02,.02],[.02,.18,.02],[.07,.07,.05]].forEach(q=>fl.add(new THREE.Mesh(new THREE.BoxGeometry(q[0],q[1],q[2]),fm)));
     fl.position.set(d.mz[0],d.mz[1],d.mz[2]);fl.visible=false;g.add(fl);
-    g.userData={arms:A,flash:fl,melee:!!WDEF[i].melee,mov:d.mov,mt:d.mt,amt:d.amt,mag:d.mag,rt:d.rt,amp:d.amp||0,bolt:d.bolt||null,magBase:d.mag?d.mag.position.clone():null};
+    g.userData={arms:A,flash:fl,melee:!!WDEF[i].melee,mov:d.mov,mov2:d.mov2||null,mag2:d.mag2||null,pg:d.pg||null,brk:d.brk||null,ox:d.ox||0,mzx:d.mzx||null,mt:d.mt,amt:d.amt,mag:d.mag,rt:d.rt,amp:d.amp||0,bolt:d.bolt||null,magBase:d.mag?d.mag.position.clone():null};
     g.visible=false;wScene.add(g);VM.push(g);
   }
 }
@@ -2212,7 +2362,7 @@ function finishReload(){
   const wi=curWeapon(),st=wstate[wi],d=WDEF[wi],take=Math.min(d.mag-st.mag,st.reserve);st.mag+=take;st.reserve-=take;
 }
 const INSPECT_T=2.8;
-let knifeSide=1;
+let knifeSide=1,akLast=0,akNext=0;
 function inspect(){
   if(!FEATURE.inspect)return;
   const P=Player,wi=curWeapon();
@@ -2250,7 +2400,9 @@ function playerShoot(wi){
   Fx.shake=Math.max(Fx.shake,(w.rocket?.3:(w.pellets>1?.08:(w.zoom?.06:.015)))*(1-P.ads*.5));
   Sfx.play(w.snd,1);if(w.zoom)Sfx.play('bolt',.8);
   const spr=calcSpread(w);
-  const mx=ox+rx*.22-ux*.18+fx*.65,my=oy-uy*.18+fy*.65,mz=oz+rz*.22-uz*.18+fz*.65;
+  if(w.dual){akLast=akNext;akNext^=1;}
+  const sdx=w.dual&&akLast?-.14:.22;
+  const mx=ox+rx*sdx-ux*.18+fx*.65,my=oy-uy*.18+fy*.65,mz=oz+rz*sdx-uz*.18+fz*.65;
   // отдача уже ПОСЛЕ расчёта траектории: вертикальный подъём растёт в серии, по горизонтали уводит с шумом
   const n=P.shotN++;P.shotT=.35;
   const climb=w.recoil*(1+Math.min(n,8)*.09)*1.5*zk*ak*(.85+Math.random()*.3);
@@ -2495,6 +2647,7 @@ function initThree(){
   buildViewmodels();
   for(let i=0;i<9;i++){const b=makeBot(i,0);Bots.push(b);ALLBOTS.push(b);}
   Remote=makeRemote();
+  Menu3D.init();
   onResize();
 }
 function onResize(){
@@ -2537,7 +2690,7 @@ function updateViewmodel(P,dt,wi,moving,sprint){
   vmSw.x+=(clamp(-dyaw*1.6,-.07,.07)-vmSw.x)*ts;vmSw.y+=(clamp(dpit*1.6,-.05,.05)-vmSw.y)*ts;
   const mv=moving?1:0,bf=1+VS.sprint*.9,bobX=Math.sin(vmBob)*.012*mv*bf,bobY=Math.sin(vmBob*2+.6)*.011*mv*bf;
   const br=Math.sin(performance.now()/1000*1.4)*.004,jy=clamp(P.vy*.004,-.04,.04),kk2=P.kick*(1-adsK*.55);
-  let px=.24+(bobX+vmSw.x+VS.strafe*.015)*ak,
+  let px=.24+u.ox+(bobX+vmSw.x+VS.strafe*.015)*ak,
       py=-.21+(bobY+br+vmSw.y-jy+VS.dip)*ak-swE*.42-VS.sprint*.06,
       pz=-.55+kk2*(.04+rk*1.5)+VS.sprint*.05+swE*.08;
   let rx=kk2*(.08+rk*4)+VS.sprint*.35+vmSw.y*1.5*ak+swE*.9+bobY*.8,
@@ -2547,7 +2700,7 @@ function updateViewmodel(P,dt,wi,moving,sprint){
   const ad=ADS[wi];
   if(ad&&adsK>0){px=lerp(px,0,adsK);py=lerp(py,-ad.y,adsK);pz=lerp(pz,-.42+kk2*.05,adsK);}
   _lh.copy(A.gl);_rh.copy(A.gr);
-  let magOff=0,magVis=true,slideO=0,boltA=0,boltZ=0;
+  let magOff=0,magVis=true,slideO=0,boltA=0,boltZ=0,brkA=0;
   const rt=u.rt,amp=u.amp;
   // ---- перезарядка
   if(rl){
@@ -2555,6 +2708,8 @@ function updateViewmodel(P,dt,wi,moving,sprint){
     if(rt==='shell'){rz+=tl*.55;rx+=tl*.25;}
     else if(rt==='rocket'){rx+=tl*.5;py-=tl*.04;}
     else if(rt==='bolt'){rz+=tl*.3;rx+=tl*.2;}
+    else if(rt==='break'){rx+=tl*.2;rz+=tl*.25;}
+    else if(rt==='dual'){rx+=tl*.5;py+=tl*.02;}
     else if(rt==='mag'){rx+=tl*.45;rz-=tl*.38;px-=tl*.03;py+=tl*.02;}
     py-=Math.sin(seq(t,.72,.8)*Math.PI)*.012;
     if(rt==='mag'||rt==='bolt'||rt==='rocket'){
@@ -2571,6 +2726,19 @@ function updateViewmodel(P,dt,wi,moving,sprint){
         else if(t<hold)_lh.copy(_mp);
         else _lh.lerpVectors(_hm,A.gl,seq(t,hold,1));
       }
+    }
+    if(rt==='dual'){
+      const t0=.2,t1=.38,t2=.5,t3=.72;
+      magOff=-amp*(seq(t,t0,t1)*(1-seq(t,t2,t3)));
+      if(t>t1&&t<t2){magOff=-amp;magVis=false;}
+      slideO=Math.sin(seq(t,.8,.92)*Math.PI)*u.amt;
+    }
+    if(rt==='break'){
+      brkA=1.0*seq(t,.1,.26)*(1-seq(t,.8,.94));
+      const pocket=_pk.set(-.03,-.22,.03),port=_mp.set(0,-.05,.0),p=clamp((t-.3)/.4,0,1)*2,f=p-Math.floor(Math.min(p,1.999));
+      if(t<.3)_lh.lerpVectors(A.gl,pocket,seq(t,.1,.3));
+      else if(t<.7)_lh.lerpVectors(pocket,port,f<.5?seq(f,0,.5):1-seq(f,.5,1));
+      else _lh.lerpVectors(pocket,A.gl,seq(t,.7,.9));
     }
     if(rt==='mag'&&u.mt==='slide'){slideO=Math.sin(seq(t,.8,.92)*Math.PI)*u.amt;}
     if(rt==='shell'){
@@ -2610,16 +2778,27 @@ function updateViewmodel(P,dt,wi,moving,sprint){
     const m=u.mov;let o=P.kick*(u.amt||0);
     if(u.mt==='cycle'){const p=Math.min(1,P.cd/Math.max(.1,w.interval));o=P.cd>0?Math.sin(p*Math.PI)*u.amt:0;}
     if(rl)o=slideO;
-    else if(u.mt==='slide'&&wstate[wi].mag<=0&&wi===0)o=u.amt;      // у пистолета затвор остаётся сзади на пустом магазине
+    else if(u.mt==='slide'&&wstate[wi].mag<=0&&(wi===0||wi===8))o=u.amt;      // у пистолета затвор остаётся сзади на пустом магазине
     m.position.z=m.userData.z0+o;
+    if(u.mov2){let o2=0;if(rl)o2=slideO;else o2=P.kick*u.amt;
+      if(!rl){if(akLast){o2=P.kick*u.amt;m.position.z=m.userData.z0;}else o2=0;u.mov2.position.z=u.mov2.userData.z0+o2;}
+      else u.mov2.position.z=u.mov2.userData.z0+o2;
+    }
+  }
+  if(u.brk)u.brk.rotation.x=-brkA;
+  if(u.pg){   // акимбо: стреляющий пистолет подбрасывает
+    const kA=P.kick*(1-adsK*.5);
+    u.pg[0].rotation.x=akLast?0:kA*.18;u.pg[1].rotation.x=akLast?kA*.18:0;
+    u.pg[0].position.z=akLast?0:kA*.03;u.pg[1].position.z=akLast?kA*.03:0;
   }
   if(u.bolt){u.bolt.rotation.z=boltA;u.bolt.position.z=.06+boltZ;}
   if(u.mag){
     if(rt==='rocket')u.mag.position.z=u.mag.userData.z0+magOff;else u.mag.position.y=u.mag.userData.y0+magOff;
     u.mag.visible=magVis;
+    if(u.mag2){u.mag2.position.y=u.mag2.userData.y0+magOff;u.mag2.visible=magVis;}
   }
   armsUpdate(A,_lh,_rh);
-  u.flash.visible=P.flashT>0&&!u.melee;if(P.flashT>0)u.flash.rotation.z=Math.random()*6;
+  u.flash.visible=P.flashT>0&&!u.melee;if(P.flashT>0){u.flash.rotation.z=Math.random()*6;if(u.mzx)u.flash.position.x=u.mzx[akLast];}
 }
 
 function renderFrame(dt,alpha){
@@ -2666,6 +2845,96 @@ function renderFrame(dt,alpha){
 }
 
 /* =====================================================================
+   Menu3D: сцена главного меню (рисуется на том же canvas под HTML-меню).
+   Справа стоит солдат с оружием; в кастомизации по центру крутится выбранное оружие.
+   ===================================================================== */
+const CAMD=3.7;
+const Menu3D={
+  scene:null,cam:null,sol:null,pivot:null,wpn:-1,t:0,mode:'main',
+  init(){
+    const sc=this.scene=new THREE.Scene();
+    const hor=new THREE.Color(0xf0b27c),top=new THREE.Color(0x27407f);
+    sc.fog=new THREE.Fog(0xe2a77a,14,64);
+    this.cam=new THREE.PerspectiveCamera(38,1,.1,300);
+    // небо (закат): градиентная сфера
+    const sg=new THREE.SphereGeometry(120,16,12),cols=[],pa=sg.attributes.position;
+    for(let i=0;i<pa.count;i++){const k=clamp(pa.getY(i)/120,0,1),c=hor.clone().lerp(top,Math.pow(k,.5));cols.push(c.r,c.g,c.b);}
+    sg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(cols),3));
+    sc.add(new THREE.Mesh(sg,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide,fog:false,depthWrite:false})));
+    const sun=new THREE.Mesh(new THREE.BoxGeometry(14,14,1),new THREE.MeshBasicMaterial({color:0xfff0b8,fog:false}));sun.position.set(-8,9,-70);sc.add(sun);
+    // земля: пиксельная трава
+    const cv=document.createElement('canvas');cv.width=cv.height=16;const g=cv.getContext('2d'),r=mulberry32(31);
+    for(let y=0;y<16;y++)for(let x=0;x<16;x++){const n=(r()-.5)*28;g.fillStyle='rgb('+(58+n|0)+','+(98+n|0)+','+(42+n|0)+')';g.fillRect(x,y,1,1);}
+    const tex=new THREE.CanvasTexture(cv);tex.magFilter=tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(70,70);
+    const gr=new THREE.Mesh(new THREE.PlaneGeometry(140,140),new THREE.MeshLambertMaterial({map:tex}));gr.rotation.x=-Math.PI/2;sc.add(gr);
+    // кубические горы и деревья на горизонте
+    const rr=mulberry32(77),mm=new THREE.MeshLambertMaterial({color:0x3f5b4a}),mm2=new THREE.MeshLambertMaterial({color:0x2e4538}),tm=new THREE.MeshLambertMaterial({color:0x6b4a2a}),lm=new THREE.MeshLambertMaterial({color:0x2f6e33});
+    for(let i=0;i<26;i++){
+      const x=-70+i*5.4+rr()*2,z=-52-rr()*18,h=4+rr()*10,w=6+rr()*6;
+      const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),i%2?mm:mm2);m.position.set(x,h/2,z);sc.add(m);
+    }
+    for(let i=0;i<12;i++){
+      const x=-18+rr()*38,z=-8-rr()*20;
+      const tr=new THREE.Mesh(new THREE.BoxGeometry(.5,2.2,.5),tm);tr.position.set(x,1.1,z);sc.add(tr);
+      const lv=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.6,1.9),lm);lv.position.set(x,3,z);sc.add(lv);
+    }
+    // свет: тёплый ключевой слева-спереди и холодный контровой сзади
+    sc.add(new THREE.AmbientLight(0xffe6d0,.85));
+    const key=new THREE.DirectionalLight(0xffdcb0,.9);key.position.set(-3,4,5);sc.add(key);
+    const rim=new THREE.DirectionalLight(0x7fa8ff,.7);rim.position.set(4,3,-4);sc.add(rim);
+    // солдат с винтовкой
+    if(Soldier.ok){
+      try{
+        const s=Soldier.build();s.userData.outline&&(s.userData.outline.visible=false);
+        s.rotation.y=-.55;sc.add(s);this.sol=s;
+      }catch(e){this.sol=null;}
+    }
+    this.pivot=new THREE.Group();this.pivot.visible=false;sc.add(this.pivot);
+    const gc=document.createElement('canvas');gc.width=gc.height=64;const gg=gc.getContext('2d'),rg=gg.createRadialGradient(32,32,0,32,32,32);rg.addColorStop(0,'rgba(255,236,200,.85)');rg.addColorStop(.5,'rgba(255,200,150,.32)');rg.addColorStop(1,'rgba(255,200,150,0)');gg.fillStyle=rg;gg.fillRect(0,0,64,64);
+    this.glow=new THREE.Mesh(new THREE.PlaneGeometry(4.4,3.2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(gc),transparent:true,depthWrite:false,fog:false}));this.glow.position.set(0,1.1,-1.1);this.glow.visible=false;sc.add(this.glow);
+    this.setMode('main');
+  },
+  /* оружие от первого лица без рук и вспышки, отцентрованное в пивоте */
+  setWeapon(id){
+    if(!this.scene)return;
+    if(this.wpn>=0){   // вернуть прошлую модель в сцену оружия
+      const g=VM[this.wpn],u=g.userData;this.pivot.remove(g);
+      for(const o of u.prevHid)g.add(o);u.prevHid=null;
+      g.position.set(0,0,0);g.rotation.set(0,0,0);g.visible=false;wScene.add(g);
+    }
+    this.wpn=-1;
+    if(id<0||!VM[id]){this.pivot.visible=false;return;}
+    const g=VM[id],u=g.userData,A=u.arms,hid=[];
+    for(const R of[A.L,A.R])for(const k of['up','fo','el','cuff','hand'])hid.push(R[k]);
+    hid.push(u.flash);
+    for(const o of hid)g.remove(o);u.prevHid=hid;
+    // сбросить анимированные части в исходное положение
+    for(const k of['mov','mov2'])if(u[k])u[k].position.z=u[k].userData.z0;
+    for(const k of['mag','mag2'])if(u[k]){u[k].position.y=u[k].userData.y0;u[k].position.z=u[k].userData.z0;u[k].visible=true;}
+    if(u.brk)u.brk.rotation.x=0;if(u.bolt){u.bolt.rotation.z=0;u.bolt.position.z=.06;}
+    if(u.pg)for(const p of u.pg){p.rotation.x=0;p.position.z=0;}
+    g.position.set(0,0,0);g.rotation.set(0,0,0);g.scale.set(1,1,1);g.updateMatrixWorld(true);
+    const b=new THREE.Box3().setFromObject(g),c=b.getCenter(new THREE.Vector3());
+    g.position.set(-c.x,-c.y,-c.z);g.visible=true;
+    this.pivot.add(g);this.wpn=id;this.pivot.visible=true;
+    const len=Math.max(b.max.z-b.min.z,.3);this.pivot.scale.setScalar(clamp(1.6/len,1,3.6));
+  },
+  setMode(m){this.mode=m;if(this.sol)this.sol.visible=m!=='cust';if(this.pivot)this.pivot.visible=(m==='cust'||!this.sol)&&this.wpn>=0;if(this.glow)this.glow.visible=m==='cust';},
+  render(dt){
+    const t=this.t+=dt,w=innerWidth,h=innerHeight,as=w/h,cam=this.cam;
+    if(cam.aspect!==as){cam.aspect=as;cam.updateProjectionMatrix();}
+    const halfW=CAMD*Math.tan(19*Math.PI/180)*as;
+    if(this.sol&&this.mode!=='cust'){
+      const s=this.sol;s.position.set(as>1.2?halfW*.5:halfW*.35,0,0);s.rotation.y=-.6+Math.sin(t*.45)*.07;
+      s.userData.mixer.update(dt);
+    }
+    this.pivot.position.set(0,1.2+Math.sin(t*1.3)*.03,0);this.pivot.rotation.y=-Math.PI/2+Math.sin(t*.5)*.55;this.pivot.rotation.x=.08;
+    cam.position.set(Math.sin(t*.22)*.12,1.35,CAMD);cam.lookAt(0,1.0,0);
+    renderer.clear();renderer.render(this.scene,cam);
+  }
+};
+
+/* =====================================================================
    Game Loop: фиксированный шаг физики, ограничение delta time
    ===================================================================== */
 let acc=0,last=performance.now(),fpsT=0,fpsN=0,chunkT=0;
@@ -2681,6 +2950,7 @@ function frame(now){
   requestAnimationFrame(frame);
   let dt=(now-last)/1000;last=now;if(dt>.1)dt=.1;if(dt<=0)return;
   fpsT+=dt;fpsN++;if(fpsT>=.5){UI.set('fps','FPS: '+Math.round(fpsN/fpsT));fpsT=0;fpsN=0;}
+  if(G.state==='menu'&&renderer&&Menu3D.scene){Menu3D.render(dt);return;}
   if(!G.ready||G.state==='menu'||G.state==='loading')return;
   const live=G.state==='playing'||(NET.on&&G.state==='paused');
   if(live){
@@ -2697,6 +2967,7 @@ function frame(now){
    ===================================================================== */
 function showLoading(txt,p){$('loadT').textContent=txt+(p!==undefined?' '+Math.round(p*100)+'%':'');}
 async function startGame(){
+  Menu3D.setWeapon(-1);
   G.state='loading';G.ready=false;
   $('menu').classList.add('hidden');$('end').classList.add('hidden');$('pause').classList.add('hidden');$('loading').classList.remove('hidden');
   await tick();
@@ -2902,13 +3173,25 @@ if(TOUCH){
 }
 if(/[?&]debug=1/.test(location.search))window.__vs={G,Player,keys,mouse,touchMove,Bots,WDEF,wstate,SLOTS,NET,Loadout,Prog,FEATURE,World,ENT:()=>ENT,Soldier,get TOUCH(){return TOUCH;}};
 
+// страницы главного меню: основная, режим/карта, настройки, кастомизация
+function mmPage(p){
+  for(const [k,id] of[['main','mmMain'],['setup','mmSetup'],['opt','mmOpt']])$(id).classList.toggle('hidden',k!==p);
+  $('mmSide').classList.toggle('hidden',p==='cust');$('mmCust').classList.toggle('hidden',p!=='cust');
+  if(!Menu3D.scene)return;
+  if(p==='cust'){Loadout.cView=Loadout.pick[Loadout.cSlot];Loadout.renderCust();Menu3D.setWeapon(Loadout.cView);}
+  else Menu3D.setWeapon(Menu3D.sol?-1:Loadout.pick[0]);
+  Menu3D.setMode(p==='cust'?'cust':'main');
+}
+$('bCust').onclick=()=>mmPage('cust');$('bSetup').onclick=()=>mmPage('setup');$('bOpt').onclick=()=>mmPage('opt');$('cBack').onclick=()=>mmPage('main');
+for(const b of document.querySelectorAll('#mmSide [data-back]'))b.onclick=()=>mmPage('main');
+Loadout.bindCust();
 // меню
 for(let i=0;i<4;i++)$('map'+i).onclick=()=>{G.map=i;for(let j=0;j<4;j++)$('map'+j).classList.toggle('on',j===i);};
 function setMode(m){
   G.mode=m;G.ns=false;
   $('modeT').classList.toggle('on',m==='tdm');$('modeF').classList.toggle('on',m==='ffa');$('modeN').classList.toggle('on',m==='duel');
   $('teamPick').classList.toggle('hidden',m!=='tdm');
-  $('play').textContent=m==='duel'?'Играть по сети':'Играть';
+  $('play').textContent=m==='duel'?'Играть по сети':'Начать игру';
 }
 $('modeT').onclick=()=>setMode('tdm');$('modeF').onclick=()=>setMode('ffa');$('modeN').onclick=()=>setMode('duel');
 $('teamR').onclick=()=>{G.team=0;$('teamR').classList.add('on');$('teamB').classList.remove('on');};
@@ -2974,7 +3257,7 @@ function toMenu(){
   for(const b of ALLBOTS){b.alive=false;b.group.visible=false;}if(Remote){Remote.alive=false;Remote.group.visible=false;}
   for(const id of['pause','end','net','scope','hud'])$(id).classList.add('hidden');
   $('menu').classList.remove('hidden');
-  setMode(G.mode);Prog.refreshMenu();
+  setMode(G.mode);Prog.refreshMenu();mmPage('main');
 }
 $('toMenu').onclick=()=>{if(G.mode==='duel'&&NET.on&&!confirm('Выйти в меню? Матч по сети будет прерван.'))return;toMenu();};
 $('endMenu').onclick=toMenu;
