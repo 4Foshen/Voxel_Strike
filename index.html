@@ -2375,35 +2375,61 @@ function buildViewmodels(){
       K(.044,.018,.044,0x9aa3ad,0,-.075,0);K(.036,.01,.036,DK,0,-.086,0);               // навершие
       K(.07,.014,.034,0x3a3f46,0,.066,0);K(.03,.012,.044,ST,0,.074,0);                  // гарда
       K(.012,.2,.044,0xd5dbe2,0,.18,.0);K(.008,.2,.012,0xf1f4f7,0,.18,-.026);           // лезвие и режущая кромка
-      K(.012,.05,.036,0xd5dbe2,0,.31,-.004,-.35);K(.01,.03,.02,0xe6eaee,0,.345,-.014,-.7); // остриё
+      K(.012,.06,.036,0xd5dbe2,0,.31,.004);K(.012,.045,.026,0xd5dbe2,0,.363,.009);K(.012,.035,.014,0xe6eaee,0,.4,.015);   // клинок сужается к острию
       K(.006,.17,.014,0x9ba4ae,0,.17,.03);                                              // обух
-      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.07,.04],lh:[-.6,-.6,.3],vo:[-.04,.1,-.02]};}
+      return{mz:[0,0,-.4],mov:null,mag:null,rt:'none',rh:[0,-.07,.04],lh:[-.6,-.6,.3]};}
   ];
-  /* Модели собраны из кубиков вручную, между некоторыми остался воздух: стягиваем соседние грани, если зазор меньше 2 см
-     (сдвигается грань меньшего кубика без детей; повёрнутые детали не трогаем) */
+  /* Модели собраны из кубиков вручную, между деталями остался воздух. Стягиваем: сначала мелкие зазоры (до 2 см) между
+     соседними гранями, затем оторванные куски (приклад, магазин) тянем к ближайшей детали. Сдвигается грань одного кубика
+     (лучше без детей), повёрнутые детали не трогаем */
   const closeGaps=g=>{
-    g.updateMatrixWorld(true);
-    const it=[],V=b=>(b.max.x-b.min.x)*(b.max.y-b.min.y)*(b.max.z-b.min.z);
+    const it=[],AX=['x','y','z'],ws=new THREE.Vector3(),V=b=>(b.max.x-b.min.x)*(b.max.y-b.min.y)*(b.max.z-b.min.z);
     g.traverse(o=>{
       if(!o.isMesh||o.geometry.type!=='BoxGeometry'||o.material.transparent||o.material.fog===false)return;
-      for(let p=o;p&&p!==g;p=p.parent)if(Math.abs(p.rotation.x)+Math.abs(p.rotation.y)+Math.abs(p.rotation.z)>1e-4)return;
-      it.push({o,b:new THREE.Box3().setFromObject(o)});
+      let rig=false;
+      for(let p=o;p&&p!==g;p=p.parent)if(Math.abs(p.rotation.x)+Math.abs(p.rotation.y)+Math.abs(p.rotation.z)>1e-4){if(p!==o)return;rig=true;}   // повёрнутая деталь (наклонный магазин) только сдвигается целиком
+      o.geometry.computeBoundingBox();it.push({o,rig,b:new THREE.Box3(),c:0});
     });
-    const AX=['x','y','z'],ws=new THREE.Vector3();
-    for(let pass=0;pass<2;pass++)for(let i=0;i<it.length;i++)for(let j=i+1;j<it.length;j++){
-      const A=it[i],B=it[j];let ax=-1,sep=0,ok=true;
+    const refresh=()=>{g.updateMatrixWorld(true);for(const e of it){if(e.rig)e.b.setFromObject(e.o);else e.b.copy(e.o.geometry.boundingBox).applyMatrix4(e.o.matrixWorld);}};
+    const dist=(A,B)=>{let d=0;for(const k of AX)d=Math.max(d,A.b.min[k]-B.b.max[k],B.b.min[k]-A.b.max[k]);return d;};   // <=0: касаются/пересекаются
+    const comps=()=>{
+      const par=it.map((_,i)=>i),f=x=>par[x]===x?x:(par[x]=f(par[x]));
+      for(let i=0;i<it.length;i++)for(let j=i+1;j<it.length;j++)if(dist(it[i],it[j])<=.0015)par[f(i)]=f(j);
+      const vol={};it.forEach((e,i)=>{e.c=f(i);vol[e.c]=(vol[e.c]||0)+V(e.b);});
+      return vol;
+    };
+    // грань к грани по одной оси с зазором (0.0015, maxGap], по остальным осям кубики честно перекрываются
+    const face=(A,B,maxGap)=>{
+      let ax=-1,sep=0;
       for(let k=0;k<3;k++){
-        const ax1=AX[k],gp=Math.max(A.b.min[ax1]-B.b.max[ax1],B.b.min[ax1]-A.b.max[ax1]);
-        if(gp>.0015&&gp<=.02){if(ax>=0){ok=false;break;}ax=k;sep=gp;}
-        else if(gp>.0015||(gp<=.0015&&gp>-.004)){ok=false;break;}   // другая ось: нужно честное перекрытие
+        const x=AX[k],gp=Math.max(A.b.min[x]-B.b.max[x],B.b.min[x]-A.b.max[x]);
+        if(gp>.0015&&gp<=maxGap){if(ax>=0)return null;ax=k;sep=gp;}
+        else if(gp>-.004)return null;
       }
-      if(!ok||ax<0)continue;
-      const lf=x=>x.o.children.length===0;
-      let m=lf(A)&&lf(B)?(V(A.b)<=V(B.b)?A:B):lf(A)?A:lf(B)?B:null;if(!m)continue;
-      const o=m===A?B:A,k=AX[ax],up=m.b.max[k]<o.b.min[k],size=m.b.max[k]-m.b.min[k];if(size<=0)continue;
+      return ax<0?null:{ax,sep};
+    };
+    const find=(maxGap,cross)=>{
+      let best=null;
+      for(let i=0;i<it.length;i++)for(let j=i+1;j<it.length;j++){
+        const A=it[i],B=it[j];if(cross&&A.c===B.c)continue;
+        const r=face(A,B,maxGap);if(r&&(!best||r.sep<best.sep))best={A,B,ax:r.ax,sep:r.sep};
+      }
+      return best;
+    };
+    const apply=c=>{
+      const lf=x=>x.o.children.length===0,{A,B}=c;
+      const m=A.rig?A:B.rig?B:lf(A)&&lf(B)?(V(A.b)<=V(B.b)?A:B):lf(A)?A:lf(B)?B:(V(A.b)<=V(B.b)?A:B),o=m===A?B:A;
+      const k=AX[c.ax],up=m.b.max[k]<o.b.min[k],size=m.b.max[k]-m.b.min[k];if(size<=0)return;
       m.o.parent.getWorldScale(ws);
-      m.o.scale[k]*=(size+sep)/size;m.o.position[k]+=(up?1:-1)*sep/2/ws[k];
-      if(up)m.b.max[k]+=sep;else m.b.min[k]-=sep;
+      if(m.rig){m.o.position[k]+=(up?1:-1)*c.sep/ws[k];return;}
+      m.o.scale[k]*=(size+c.sep)/size;m.o.position[k]+=(up?1:-1)*c.sep/2/ws[k];
+    };
+    refresh();comps();
+    for(let n=0,c;n<300&&(c=find(.02,false));n++){apply(c);refresh();comps();}
+    for(let n=0,c;n<60;n++){
+      const vol=comps();if(Object.keys(vol).length<2)break;
+      if(!(c=find(.09,true)))break;
+      apply(c);refresh();
     }
   };
   const fm=new THREE.MeshBasicMaterial({color:0xffe38a,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false});
